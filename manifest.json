@@ -1,7 +1,7 @@
 {
   "name": "Infodose KODUX",
   "short_name": "Infodose",
-  "start_url": "splash.html",
+  "start_url": "splash_3.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
