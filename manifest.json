@@ -1,6 +1,6 @@
 {
-  "name": "Dual_Infodose KODUX",
-  "short_name": "a_Infodose",
+  "name": "Infodose KODUX",
+  "short_name": "Infodose",
   "start_url": "splash.html",
   "display": "standalone",
   "background_color": "#000000",
@@ -8,12 +8,12 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "Botao_cor_Type_Dual_Infodose.png",
+      "src": "icon192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "Botao_cor_Type_Dual_Infodose.png",
+      "src": "icon512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

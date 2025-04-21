@@ -1,0 +1,17 @@
+{
+  "name": "MetaLux Pulse",
+  "description": "Or\u00e1culo simb\u00f3lico interativo que ativa arqu\u00e9tipos e miss\u00f5es com base na inten\u00e7\u00e3o do usu\u00e1rio. Criado por Kodux. Projeto 78KDXMTLX.",
+  "version": "1.0.0",
+  "keywords": [
+    "MetaLux",
+    "PWA",
+    "Or\u00e1culo",
+    "Simbologia",
+    "Kodux",
+    "MetaUx",
+    "Inten\u00e7\u00e3o",
+    "Arqu\u00e9tipo"
+  ],
+  "author": "Kodux",
+  "license": "MIT"
+}
