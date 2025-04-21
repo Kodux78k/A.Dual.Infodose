@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Splash Cinematográfico - Dual Infodose</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(to bottom, #000000, #1a1a1a);
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      opacity: 0;
+      animation: fadeInBody 2s ease forwards;
+      position: relative;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .logo-container {
+      position: relative;
+      z-index: 1;
+      width: 300px;
+      max-width: 80%;
+      animation: glow 3s ease-in-out infinite alternate;
+      padding: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 1.2s ease, opacity 1.2s ease;
+    }
+
+    .logo-container object {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .infodose {
+      margin-top: 25px;
+      font-size: 2em;
+      color: #ccc;
+      opacity: 0;
+      animation: fadeIn 2s forwards 2s, pulse 4s infinite ease-in-out 4s;
+      z-index: 1;
+      position: relative;
+    }
+
+    .infodose strong {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .frase {
+      position: absolute;
+      bottom: 60px;
+      font-size: 1.2em;
+      color: #999;
+      opacity: 0;
+      animation: fadeIn 2s forwards 3s;
+      z-index: 1;
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    .frase strong {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    @keyframes glow {
+      from {
+        filter: drop-shadow(0 0 10px #00ffff) drop-shadow(0 0 20px #ff00ff);
+      }
+      to {
+        filter: drop-shadow(0 0 25px #00ffff) drop-shadow(0 0 35px #ff00ff);
+      }
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInBody {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOutBody {
+      to {
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    .explosion {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, white, transparent);
+      transform: translate(-50%, -50%);
+      z-index: 999;
+      opacity: 0.8;
+      animation: explode 1s forwards ease-out;
+    }
+
+    @keyframes explode {
+      0% {
+        width: 0;
+        height: 0;
+        opacity: 0.8;
+      }
+      70% {
+        width: 600vw;
+        height: 600vw;
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .logo-container.distort {
+      filter: url(#distort);
+    }
+
+    @media (max-width: 768px) {
+      .infodose {
+        font-size: 1.5em;
+      }
+      .frase {
+        font-size: 1em;
+        bottom: 66px;
+      }
+      .logo-container {
+        width: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Distortion SVG Filter -->
+  <svg style="display: none;">
+    <filter id="distort">
+      <feTurbulence baseFrequency="0.01" numOctaves="3" result="turb"/>
+      <feDisplacementMap in="SourceGraphic" in2="turb" scale="30"/>
+    </filter>
+  </svg>
+
+  <!-- Áudio Suave -->
+  <audio id="transitionSound" src="suave_portal.mp3" preload="auto"></audio>
+
+  <!-- Partículas -->
+  <div id="particles-js"></div>
+
+  <!-- Logo com Transição -->
+  <div class="logo-container" id="logo" onclick="goToIndex()">
+    <object data="3D_logo_Dual_Infodose_10.svg" type="image/svg+xml"></object>
+  </div>
+
+  <!-- Título e Frase -->
+  <div class="infodose">dual.<strong>Infodose</strong></div>
+  <div class="frase"><strong>Sempre</strong> único<strong>. Sempre</strong> seu<strong>.</strong></div>
+
+  <!-- Particles.js -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS('particles-js', {
+      "particles": {
+        "number": {
+          "value": 50,
+          "density": { "enable": true, "value_area": 700 }
+        },
+        "color": { "value": ["#00ffff", "#ff00ff"] },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5, "random": true },
+        "size": { "value": 3, "random": true },
+        "move": {
+          "enable": true,
+          "speed": 1.5,
+          "direction": "none",
+          "random": true,
+          "out_mode": "out",
+          "straight": false,
+          "attract": { "enable": true, "rotateX": 500, "rotateY": 1000 }
+        }
+      },
+      
+      "retina_detect": true
+    });
+
+    function goToIndex() {
+      const logo = document.getElementById("logo");
+      const sound = document.getElementById("transitionSound");
+
+      // Ativar distorção visual
+      logo.classList.add("distort");
+
+      // Tocar som suave
+      sound.volume = 0;
+      sound.play();
+
+      // Animações cinematográficas com GSAP
+      gsap.to(logo, {
+        scale: 0,
+        duration: 1.2,
+        ease: "power3.out"
+      });
+
+      gsap.to(".infodose", { opacity: 0, duration: 0.8, delay: 0.3 });
+      gsap.to(".frase", { opacity: 0, duration: 0.8, delay: 0.3 });
+
+      // Explosão luminosa
+      
+
+      // Fade final
+      setTimeout(() => {
+        document.body.style.animation = "fadeOutBody 1.2s forwards";
+      }, 800);
+
+      // Redireciona ao final
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 1600);
+    }
+  </script>
+
+</body>
+</html>

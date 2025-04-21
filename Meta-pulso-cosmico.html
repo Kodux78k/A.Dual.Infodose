@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<title>MetaLux – Tríade Simbólica</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #0f0f0f 0%, #000000 100%);
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4vh 2rem;
+      position: relative;
+      z-index: 0;
+    }
+
+    #particles-js {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .circle, .espiral {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      margin: 2rem;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 0 30px rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      animation: spin 6s linear infinite;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .circle {
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top: 3px solid rgba(255,255,255,0.4);
+    }
+
+    .espiral {
+      border: 2px dashed rgba(255,255,255,0.2);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .display-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      font-size: 2rem;
+      text-align: center;
+      letter-spacing: 0.5rem;
+      margin-top: 1rem;
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+    }
+
+    .label {
+      font-size: 0.9rem;
+      opacity: 0.5;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+<div id="particles-js"></div>
+<div class="circle" onclick="gerarCentro()">⭕️</div>
+<div class="display-box" id="triadeBox">
+</div>
+<div class="espiral" onclick="gerarLados()">🌀</div>
+<div class="label">MetaLux • Pulso Vivo</div>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 88, density: { enable: true, value_area: 900 } },
+        color: { value: ["#00ffff", "#ff00ff", "#ffffff"] },
+        shape: { type: "circle" },
+        opacity: { value: 0.4, random: true },
+        size: { value: 2, random: true },
+        move: {
+          enable: true,
+          speed: 1.2,
+          direction: "none",
+          random: true,
+          out_mode: "out",
+        }
+      },
+      retina_detect: true
+    });
+
+    const simbolosCentro = ["⭕️", "🜁", "🔮", "🪐", "🜂"];
+    const simbolosLado = ["⚡️", "✨", "🔥", "🌑", "💫"];
+
+    let centro = "⭕️";
+    let lado1 = "⚡️";
+    let lado2 = "⚡️";
+
+    function atualizarTriade() {
+      const caixa = document.getElementById("triadeBox");
+      caixa.innerText = `${lado1} ${centro} ${lado2}`;
+    }
+
+    function gerarCentro() {
+      centro = simbolosCentro[Math.floor(Math.random() * simbolosCentro.length)];
+      atualizarTriade();
+    }
+
+    function gerarLados() {
+      lado1 = simbolosLado[Math.floor(Math.random() * simbolosLado.length)];
+      lado2 = simbolosLado[Math.floor(Math.random() * simbolosLado.length)];
+      atualizarTriade();
+    }
+  </script>
+<button onclick="ativarTriade()" style="margin-top:2rem;">Ativar Tríade</button><script>
+    function ativarTriade() {
+      const triade = [lado1, centro, lado2];
+      localStorage.setItem('triade_ativa', JSON.stringify(triade));
+      window.location.href = "index.html";
+    }
+    </script></body>
+</html>
