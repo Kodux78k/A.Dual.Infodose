@@ -1,13 +1,22 @@
 {
-  "name": "Dual Infodose",
+  "name": "Infodose KODUX",
   "short_name": "Infodose",
-  "start_url": "index.html",
+  "description": "Sistema simbólico cósmico com arquétipos pulsantes e ativação tríade.",
+  "start_url": "splash.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#0f0f0f",
   "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "icons": [
-    {"src": "icon192.png", "type": "image/png", "sizes": "192x192"},
-    {"src": "icon512.png", "type": "image/png", "sizes": "512x512"}
+    {
+      "src": "icon192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
   ]
 }
