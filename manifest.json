@@ -1,7 +1,7 @@
 {
-  "name": "MetaLux Pulse",
-  "short_name": "MetaLux",
-  "start_url": "splash.html",
+  "name": "Dual Infodose",
+  "short_name": "Infodose",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#0f0f0f",
