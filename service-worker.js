@@ -1,7 +1,7 @@
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open('metapulso').then(cache => {
+    caches.open('metapulso-v5').then(cache => {
       return cache.addAll(['/', '/index.html', '/manifest.json']);
     })
   );
