@@ -1,0 +1,32 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches:
+      - main  # ou a branch que você usar para produção
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Ou qualquer versão que seu projeto exija
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build  # Comando para build do seu projeto
+
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          curl -sL https://github.com/netlify/cli/releases/download/v3.3.1/netlify-cli-linux-x64.tar.gz | tar xz
+          ./netlify-cli/netlify deploy --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
