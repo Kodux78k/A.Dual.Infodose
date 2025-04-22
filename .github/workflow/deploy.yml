@@ -1,32 +1,29 @@
-name: Deploy to Netlify
+name: Deploy Coblux
 
 on:
   push:
     branches:
-      - main  # ou a branch que você usar para produção
+      - main  # ou a branch que você estiver usando
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
+      - name: Clonar repositório
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'  # Ou qualquer versão que seu projeto exija
-
-      - name: Install Dependencies
+      - name: Instalar dependências
         run: npm install
 
-      - name: Build Project
-        run: npm run build  # Comando para build do seu projeto
+      - name: Rodar build
+        run: npm run build
 
-      - name: Deploy to Netlify
+      - name: Deploy para Netlify
+        uses: nwtgck/actions-netlify@v1.2.3
+        with:
+          publish-dir: './dist'  # ou build, dependendo do seu framework
+          production-branch: main
+          deploy-message: 'Deploy automático pelo Coblux'
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: |
-          curl -sL https://github.com/netlify/cli/releases/download/v3.3.1/netlify-cli-linux-x64.tar.gz | tar xz
-          ./netlify-cli/netlify deploy --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+          NETLIFY
