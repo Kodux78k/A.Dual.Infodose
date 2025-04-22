@@ -1,31 +1,36 @@
-
-name: Deploy Coblux
+name: Deploy Automático Coblux
 
 on:
   push:
     branches:
-      - main  # ou a branch que você estiver usando
+      - main  # Executa sempre que houver push na branch main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar repositório
-        uses: actions/checkout@v2
+      - name: 🔄 Clonar repositório
+        uses: actions/checkout@v3
 
-      - name: Instalar dependências
+      - name: 📦 Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: 📥 Instalar dependências
         run: npm install
 
-      - name: Rodar build
+      - name: 🏗️ Build do projeto
         run: npm run build
 
-      - name: Deploy para Netlify
-        uses: nwtgck/actions-netlify@v1.2.3
+      - name: 🚀 Deploy para Netlify
+        uses: nwtgck/actions-netlify@v2.0
         with:
-          publish-dir: './dist'  # ou build, dependendo do seu framework
+          publish-dir: ./dist
           production-branch: main
-          deploy-message: 'Deploy automático pelo Coblux'
-        env:
+          deploy-message: "Deploy automático via GitHub Actions Coblux"
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        env:
+          CI: false
