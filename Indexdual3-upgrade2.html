@@ -204,11 +204,11 @@ function callOpenRouter(userText) {
   fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${openRouterKey}`,
+      "Authorization": `Bearer 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`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: model,
+      model: "mistral/mistral-7b-instruct:free",
       messages: [{ role: "user", content: userText }],
       temperature: 0.7
     })
