@@ -208,7 +208,7 @@ function callOpenRouter(userText) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: "mistral/mistral-7b-instruct:free",
+      model: "qwen/qwen2.5-vl-3b-instruct:free",
       messages: [{ role: "user", content: userText }],
       temperature: 0.7
     })
