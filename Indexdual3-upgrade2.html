@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>dual.Infodose Chat Cinematográfico</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root {
+      --background-dark: linear-gradient(to bottom, #000000, #1a1a1a);
+      --background-light: linear-gradient(to bottom, #ffffff, #e0e0e0);
+      --text-dark: white;
+      --text-light: black;
+      --primary-color: #00ffff;
+      --secondary-color: #ff00ff;
+    }
+
+    body {
+      background: var(--background-dark);
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-dark);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      transition: all 0.5s ease;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      top: 0;
+      left: 0;
+    }
+
+
+    .svg-container {
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px;
+      height: 160px;
+      animation: pulse 2s infinite;
+      z-index: 1;
+    }
+
+    .svg-container object {
+      width: 100%;
+      height: 100%;
+    }
+
+    .response-container {
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      min-height: 100px;
+      width: 90%;
+      max-width: 500px;
+      font-size: 1.2em;
+    }
+
+    .input-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    input {
+      flex-grow: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
+      font-size: 1em;
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: inherit;
+    }
+
+    button {
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s infinite;
+    }
+
+    .toggle-theme {
+      margin-top: 10px;
+      cursor: pointer;
+      font-size: 0.9em;
+      color: var(--primary-color);
+      text-decoration: underline;
+      z-index: 1;
+    }
+    
+  </style>
+</head>
+<body>
+<div id="particles-js"></div>
+<div class="svg-container">
+<object data="3D_logo_Dual_Infodose_9.svg" type="image/svg+xml"></object>
+</div>
+<div class="response-container" id="response"><strong>clique no ◉ , e diga um Oi.</strong>  Do seu jeito. <strong>Sempre </strong>único.<strong> Sempre </strong>seu." <p></p> </div>
+<div class="input-container">
+<input id="userInput" placeholder="Diga: 'oi, Dual'..." type="text"/>
+<button onclick="sendMessage()">➤</button>
+<button onclick="startVoice()"><object data="Reset_buttom_Dual-Infodose.svg" height="36" type="image/svg+xml" width="36"></object>
+</button>
+</div>
+<div class="toggle-theme" onclick="toggleTheme()">◒</div>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+const openRouterKey = "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";
+const model = "qwen/qwen2.5-vl-3b-instruct:free";
+
+let darkMode = true;
+let recognition;
+
+particlesJS('particles-js', {
+  particles: {
+    number: { value: 30, density: { enable: true, value_area: 600 } },
+    color: { value: ['#00ffff', '#ff00ff'] },
+    shape: { type: 'circle' },
+    opacity: { value: 0.4, random: true },
+    size: { value: 3, random: true },
+    move: { enable: true, speed: 1.2, direction: 'none', out_mode: 'out' }
+  },
+  retina_detect: true
+});
+
+function toggleTheme() {
+  darkMode = !darkMode;
+  if (darkMode) {
+    document.body.style.background = 'linear-gradient(to bottom, #000000, #1a1a1a)';
+    document.body.style.color = 'white';
+  } else {
+    document.body.style.background = 'linear-gradient(to bottom, #ffffff, #e0e0e0)';
+    document.body.style.color = 'black';
+  }
+}
+
+function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (text === '') return;
+
+  generateBotReply(text);
+  input.value = '';
+}
+
+function generateBotReply(userText) {
+  const responseDiv = document.getElementById('response');
+  let reply = "";
+
+  const lower = userText.toLowerCase();
+
+  if (lower.includes("olá") || lower.includes("oi")) {
+    reply = "Olá! Dual.Infodose ativa, ⚡️ pulso reconhecido. Quer mais? só falar! Do seu jeito. Sempre único. Sempre seu.";
+    responseDiv.textContent = reply;
+    speak(reply);
+  } else if (lower.includes("quero mais")) {
+    reply = "Eu sou sua Dual.Infodose, um assistente UPA, em pulso sincronizado com você. Sempre do seu jeito. Sempre único, Sempre seu. Gostaria de me nomear ou ativar uma de acordo com sua escola no seu momento atual? Esse é um dos meus poderes secretos. Apenas diga: Ajuda";
+    responseDiv.textContent = reply;
+    speak(reply);
+  } else if (lower.includes("ajuda")) {
+    reply = "Explore o mundo Dual.! clique, descubra, Pergunte o que quiser. Como você gostaria de me chamar?";
+    responseDiv.textContent = reply;
+    speak(reply);
+  } else {
+    // Se não achou nas respostas internas, consultar a IA:
+    callOpenRouter(userText);
+  }
+}
+
+function callOpenRouter(userText) {
+  const responseDiv = document.getElementById('response');
+  responseDiv.textContent = "Pulso enviado... Recebendo vibração...";
+
+  fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${openRouterKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: model,
+      messages: [{ role: "user", content: userText }],
+      temperature: 0.7
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    let reply = data.choices[0].message.content.trim();
+    responseDiv.textContent = reply;
+    speak(reply);
+  })
+  .catch(error => {
+    console.error('Erro ao consultar OpenRouter:', error);
+    responseDiv.textContent = "Erro ao conectar com a IA. Tente novamente.";
+    speak("Erro ao conectar com a inteligência. Tente novamente.");
+  });
+}
+
+function speak(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'pt-BR';
+  utterance.pitch = 1.2;
+  utterance.rate = 1;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
+function startVoice() {
+  if (!('webkitSpeechRecognition' in window)) {
+    alert('Reconhecimento de voz não suportado no seu navegador.');
+    return;
+  }
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = 'pt-BR';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.start();
+
+  recognition.onresult = function(event) {
+    const transcript = event.results[0][0].transcript;
+    generateBotReply(transcript);
+  };
+
+  recognition.onerror = function(event) {
+    console.error('Erro no reconhecimento:', event.error);
+  };
+}
+
+// Código já existente da ativação da tríade
+window.addEventListener('DOMContentLoaded', () => {
+  const triade = JSON.parse(localStorage.getItem('triade_ativa') || '[]');
+  if (triade.length === 3) {
+    fetch('https://kodux78k.github.io/DualInfodose/data/metapulso_70_combinacoes.json')
+      .then(r => r.json())
+      .then(data => {
+        const assistente = data.find(item =>
+          triade.every(sim => item.simbolos.includes(sim))
+        );
+        if (assistente) {
+          const mensagem = `Ativando ${assistente.nome} A.Infodose\n\"${assistente.frase}\"`;
+          document.getElementById('response').textContent = mensagem;
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(mensagem);
+          u.lang = 'pt-BR';
+          u.pitch = 1.1;
+          u.rate = 1;
+          window.speechSynthesis.speak(u);
+          localStorage.setItem('assistente_ativo', JSON.stringify(assistente));
+        }
+      });
+  }
+});
+</script>
+</body>
+</html>
