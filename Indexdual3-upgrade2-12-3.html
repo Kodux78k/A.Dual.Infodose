@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>dual.Infodose Chat Cinematográfico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --background-dark: linear-gradient(to bottom, #000000, #1a1a1a);
+      --background-light: linear-gradient(to bottom, #ffffff, #e0e0e0);
+      --text-dark: white;
+      --text-light: black;
+      --primary-color: #00ffff;
+      --secondary-color: #ff00ff;
+    }
+
+    body {
+      background: var(--background-dark);
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-dark);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      transition: all 0.5s ease;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      top: 0;
+      left: 0;
+    }
+
+    .svg-container {
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px;
+      height: 160px;
+      animation: pulse 2s infinite;
+      z-index: 1;
+    }
+
+    .svg-container object {
+      width: 100%;
+      height: 100%;
+    }
+
+    .response-container {
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      min-height: 120px;
+      width: 90%;
+      max-width: 500px;
+      font-size: 1.2em;
+    }
+
+    .response-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .copy-button {
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      transition: background 0.3s;
+    }
+
+    .copy-button:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pagination button {
+      background: none;
+      border: none;
+      font-size: 1.2em;
+      color: var(--primary-color);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .pagination button:hover {
+      transform: scale(1.2);
+    }
+
+    .page {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .page.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .input-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    input {
+      flex-grow: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
+      font-size: 1em;
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: inherit;
+    }
+
+    button {
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s infinite;
+    }
+
+    .toggle-theme {
+      margin-top: 10px;
+      cursor: pointer;
+      font-size: 0.9em;
+      color: var(--primary-color);
+      text-decoration: underline;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="svg-container">
+    <object data="3D_logo_Dual_Infodose_9.svg" type="image/svg+xml"></object>
+  </div>
+
+  <div class="response-container" id="response">
+    <div class="page active"><strong>clique no ◉ , e diga um Oi.</strong> Do seu jeito. <strong>Sempre </strong>único.<strong> Sempre </strong>seu.</div>
+    <div class="response-controls">
+      <div class="copy-button" onclick="copyResponse()" title="Copiar resposta">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="3" ry="3"/>
+        </svg>
+      </div>
+      <div class="pagination">
+        <button onclick="changePage(-1)">⟵</button>
+        <span id="pageIndicator">1 / 1</span>
+        <button onclick="changePage(1)">⟶</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-container">
+    <input id="userInput" placeholder="Diga: 'oi, Dual'..." type="text" />
+    <button onclick="sendMessage()">➤</button>
+    <button onclick="startVoice()">
+      <object data="Reset_buttom_Dual-Infodose.svg" type="image/svg+xml" width="36" height="36"></object>
+    </button>
+  </div>
+
+  <div class="toggle-theme" onclick="toggleTheme()">◒</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    const responseContainer = document.querySelector('.response-container');
+    let currentPage = 0, totalPages = 1, pages = [];
+
+    function toggleTheme() {
+      document.body.style.background = document.body.style.background.includes('ffffff') ?
+        'linear-gradient(to bottom, #000000, #1a1a1a)' :
+        'linear-gradient(to bottom, #ffffff, #e0e0e0)';
+      document.body.style.color = document.body.style.color === 'white' ? 'black' : 'white';
+    }
+
+    function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (text === '') return;
+
+  generateBotReply(text);
+  input.value = '';
+}
+
+function generateBotReply(userText) {
+  const responseDiv = document.getElementById('response');
+  let reply = "";
+
+  const lower = userText.toLowerCase();
+
+  if (lower.includes("olá") || lower.includes("oi")) {
+    reply = "Olá! Dual.Infodose ativa, ⚡️ pulso reconhecido. Quer mais? só falar! Do seu jeito. Sempre único. Sempre seu.";
+    responseDiv.textContent = reply;
+    speak(reply);
+  } else if (lower.includes("quero mais")) {
+    reply = "Eu sou sua Dual.Infodose, um assistente UPA, em pulso sincronizado com você. Sempre do seu jeito. Sempre único, Sempre seu. Gostaria de me nomear ou ativar uma de acordo com sua escola no seu momento atual? Esse é um dos meus poderes secretos. Apenas diga: Ajuda";
+    responseDiv.textContent = reply;
+    speak(reply);
+  } else if (lower.includes("ajuda")) {
+    reply = "Explore o mundo Dual.! clique, descubra, Pergunte o que quiser. Como você gostaria de me chamar?";
+    responseDiv.textContent = reply;
+    speak(reply);
+  } else {
+    // Se não achou nas respostas internas, consultar a IA:
+    callOpenRouter(userText);
+  }
+}
+
+function callOpenRouter(userText) {
+  const responseDiv = document.getElementById('response');
+  responseDiv.textContent = "Pulso enviado... Recebendo vibração...";
+
+  fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${openRouterKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "qwen/qwen2.5-vl-3b-instruct:free",
+      messages: [{ role: "user", content: userText }],
+      temperature: 0.7
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    let reply = data.choices[0].message.content.trim();
+    responseDiv.textContent = reply;
+    speak(reply);
+  })
+  .catch(error => {
+    console.error('Erro ao consultar OpenRouter:', error);
+    responseDiv.textContent = "Erro ao conectar com a IA. Tente novamente.";
+    speak("Erro ao conectar com a inteligência. Tente novamente.");
+  });
+}
+
+    function speak(text) {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'pt-BR';
+      u.pitch = 1.2;
+      u.rate = 1;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    }
+
+    function startVoice() {
+      if (!('webkitSpeechRecognition' in window)) return alert('Reconhecimento de voz não suportado.');
+      const rec = new webkitSpeechRecognition();
+      rec.lang = 'pt-BR';
+      rec.start();
+      rec.onresult = (e) => generateBotReply(e.results[0][0].transcript);
+    }
+
+    function renderPaginatedResponse(text) {
+      const words = text.split(' ');
+      const charLimit = window.innerWidth < 768 ? 600 : 1200;
+      pages = [];
+      let current = '';
+
+      for (let word of words) {
+        if ((current + word).length > charLimit) {
+          pages.push(current.trim());
+          current = word + ' ';
+        } else {
+          current += word + ' ';
+        }
+      }
+
+      if (current.trim()) pages.push(current.trim());
+      totalPages = pages.length;
+      currentPage = 0;
+
+      const container = document.getElementById('response');
+      container.innerHTML = '';
+      pages.forEach((p, i) => {
+        const div = document.createElement('div');
+        div.className = 'page' + (i === 0 ? ' active' : '');
+        div.textContent = p;
+        container.appendChild(div);
+      });
+
+      container.appendChild(document.querySelector('.response-controls'));
+      updatePaginationUI();
+    }
+
+    function changePage(delta) {
+      const newPage = currentPage + delta;
+      if (newPage >= 0 && newPage < totalPages) {
+        document.querySelectorAll('.page')[currentPage].classList.remove('active');
+        document.querySelectorAll('.page')[newPage].classList.add('active');
+        currentPage = newPage;
+        updatePaginationUI();
+      }
+    }
+
+    function updatePaginationUI() {
+      document.getElementById('pageIndicator').textContent = `${currentPage + 1} / ${totalPages}`;
+    }
+
+    function copyResponse() {
+      const current = document.querySelectorAll('.page')[currentPage];
+      navigator.clipboard.writeText(current.textContent).then(() => alert("Resposta copiada!"));
+    }
+
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 30, density: { enable: true, value_area: 600 } },
+        color: { value: ['#00ffff', '#ff00ff'] },
+        shape: { type: 'circle' },
+        opacity: { value: 0.4, random: true },
+        size: { value: 3, random: true },
+        move: { enable: true, speed: 1.2, direction: 'none', out_mode: 'out' }
+      },
+      retina_detect: true
+    });
+  </script>
+</body>
+</html>
