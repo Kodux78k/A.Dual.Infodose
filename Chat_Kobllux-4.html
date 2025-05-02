@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>dual.Infodose Chat Cinematográfico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --background-dark: linear-gradient(to bottom, #000000, #1a1a1a);
+      --text-dark: white;
+      --primary-color: #111111;
+      --secondary-color: #5e5c5e;
+      --glow-color: #00ffe0;
+    }
+
+    body {
+      background: var(--background-dark);
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-dark);
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    #camera {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 1;
+      border: 10px solid transparent;
+      box-shadow: 0 0 40px var(--glow-color), inset 0 0 40px var(--glow-color);
+      pointer-events: none;
+    }
+
+    .chat-container {
+      position: fixed;
+      bottom: 90px;
+      left: 0;
+      width: 100%;
+      max-height: 40%;
+      overflow-y: auto;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 3;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+    }
+
+    .message {
+      background: rgba(20, 20, 20, 0.85);
+      padding: 12px 18px;
+      border-radius: 16px;
+      margin-bottom: 10px;
+      max-width: 90%;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .analyze-btn, .toggle-camera-btn {
+      position: fixed;
+      z-index: 4;
+      background: var(--glow-color);
+      color: black;
+      padding: 12px 18px;
+      border-radius: 30px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--glow-color);
+      transition: all 0.3s ease;
+    }
+
+    .analyze-btn:hover, .toggle-camera-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px var(--glow-color);
+    }
+
+    .analyze-btn {
+      bottom: 60px;
+      left: 50%;
+  transform: translateX(-50%);
+  padding: 10px;
+  background: linear-gradient(to right, #666666, #1a1a1a);
+  border-radius: 50%;
+  border: none;
+    }
+
+    .toggle-camera-btn {
+  top: 20px;                /* Em vez de bottom */
+  left: 20px;               /* Em vez de right */
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 8px;
+  cursor: pointer;
+  z-index: 4;
+}
+
+.toggle-camera-btn svg {
+  fill: var(--glow-color);
+  width: 28px;
+  height: 28px;
+}
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <video id="camera" autoplay playsinline muted></video>
+
+  <div class="chat-container" id="chat"></div>
+
+  <button class="analyze-btn" onclick="chamarIA()">
+    <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 13c-2.49 0-4.5-2.01-4.5-4.5S9.51 8.5 12 8.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5z"/><circle cx="12" cy="12" r="2.5"/></svg>
+  </button>
+  <button class="toggle-camera-btn" onclick="alternarCamera()">
+  <svg viewBox="0 0 24 24"><path d="M20 5h-3.17l-1.83-2H9L7.17 5H4c-1.1 0-2 .9-2 2v3h2V7h16v10h-5v2h5c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zM2 17v-3h2v3h16v-3h2v3c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2z"/></svg>
+</button>
+
+  <script>
+    const video = document.getElementById('camera');
+    const chat = document.getElementById('chat');
+    let usandoFrontal = true;
+    let streamAtual = null;
+
+    async function startCamera() {
+      try {
+        if (streamAtual) {
+          streamAtual.getTracks().forEach(track => track.stop());
+        }
+
+        const constraints = {
+          video: {
+            facingMode: usandoFrontal ? { exact: "user" } : { exact: "environment" }
+          },
+          audio: false
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        streamAtual = stream;
+        video.srcObject = stream;
+
+      } catch (err) {
+        enviarMensagem("Erro ao acessar a câmera: " + err.message);
+      }
+    }
+
+    function alternarCamera() {
+      usandoFrontal = !usandoFrontal;
+      startCamera();
+    }
+
+    startCamera();
+
+    function enviarMensagem(msg) {
+      const el = document.createElement('div');
+      el.className = 'message';
+      el.textContent = msg;
+      chat.appendChild(el);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    const mensagens = [
+      "Vejo silêncio entre as imagens...",
+      "Sua presença emana curiosidade.",
+      "Movimento detectado. Seria dúvida?",
+      "Um objeto brilha como sinal oculto.",
+      "Luz e sombra dançam em sua expressão.",
+      "A mão levanta perguntas não ditas.",
+      "Sinto o fluxo simbólico da sua energia.",
+      "O que não se vê, às vezes fala mais alto.",
+      "Há padrões ocultos neste momento.",
+      "Tudo à sua volta parece esperar uma resposta..."
+    ];
+
+    function iniciarMensagensSimbolicas() {
+      setInterval(() => {
+        const frase = mensagens[Math.floor(Math.random() * mensagens.length)];
+        enviarMensagem(frase);
+      }, 6000 + Math.random() * 2000);
+    }
+
+    iniciarMensagensSimbolicas();
+
+    async function chamarIA() {
+      enviarMensagem("Analisando a cena...");
+      try {
+        const prompt = "Você está vendo uma cena captada pela câmera. Interprete simbolicamente o que pode estar acontecendo.";
+        const resposta = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer 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"
+          },
+          body: JSON.stringify({
+            model: "qwen/qwen2.5-vl-3b-instruct:free",
+            messages: [
+              { role: "system", content: "Você é uma IA simbólica que interpreta o mundo como se fosse arte, sonho ou arquétipo." },
+              { role: "user", content: prompt }
+            ]
+          })
+        });
+
+        const data = await resposta.json();
+        const msgIA = data.choices[0].message.content.trim();
+        enviarMensagem(msgIA);
+      } catch (e) {
+        enviarMensagem("Erro ao conectar com a IA simbólica.");
+        console.error(e);
+      }
+    }
+
+    let faceDetector, handLandmarker;
+
+    async function iniciarMediaPipe() {
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+      );
+
+      faceDetector = await FaceDetector.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_detector/short_range/float16/1/face_detector.task"
+        },
+        runningMode: "VIDEO"
+      });
+
+      handLandmarker = await HandLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
+        },
+        runningMode: "VIDEO",
+        numHands: 2
+      });
+
+      processarVideo();
+    }
+
+    async function processarVideo() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      function detectar() {
+        if (video.readyState < 2) {
+          requestAnimationFrame(detectar);
+          return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        const timestamp = performance.now();
+
+        faceDetector.detectForVideo(imageData, timestamp).then(faces => {
+          if (faces.detections.length > 0) {
+            enviarMensagem("Rosto detectado. Expressão intrigante capturada.");
+          }
+        });
+
+        handLandmarker.detectForVideo(imageData, timestamp).then(hands => {
+          if (hands.handedness.length > 0) {
+            enviarMensagem("Mão detectada. Gesto simbólico identificado.");
+          }
+        });
+
+        requestAnimationFrame(detectar);
+      }
+
+      detectar();
+    }
+
+    iniciarMediaPipe();
+  </script>
+
+</body>
+</html>
