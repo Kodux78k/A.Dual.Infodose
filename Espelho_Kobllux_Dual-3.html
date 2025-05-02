@@ -167,10 +167,10 @@
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer SEU_TOKEN_AQUI" // Substitua pelo seu token da OpenRouter
+            "Authorization": "Bearer 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" // Substitua pelo seu token da OpenRouter
           },
           body: JSON.stringify({
-            model: "openai/gpt-4",  // ou outro modelo disponível na OpenRouter
+            model: "qwen/qwen2.5-vl-3b-instruct:free",  // ou outro modelo disponível na OpenRouter
             messages: [
               { role: "system", content: "Você é uma IA simbólica que interpreta o mundo como se fosse arte, sonho ou arquétipo." },
               { role: "user", content: prompt }
