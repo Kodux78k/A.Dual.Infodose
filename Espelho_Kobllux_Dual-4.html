@@ -127,7 +127,7 @@
     }
 
     async function chamarOpenRouter(prompt) {
-      const apiKey = "YOUR_API_KEY"; // Substitua pela sua chave
+      const apiKey = "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"; // Substitua pela sua chave
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -135,7 +135,7 @@
           "Authorization": `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: "openai/gpt-4",
+          model: "qwen/qwen2.5-vl-3b-instruct:free",
           messages: [{ role: "user", content: prompt }]
         })
       });
