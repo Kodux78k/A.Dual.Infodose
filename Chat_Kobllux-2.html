@@ -185,7 +185,7 @@
       setInterval(() => {
         const frase = mensagens[Math.floor(Math.random() * mensagens.length)];
         enviarMensagem(frase);
-      }, 6000 + Math.random() * 2000);
+      }, 66000 + Math.random() * 2000);
     }
 
     iniciarMensagensSimbolicas();
@@ -213,7 +213,7 @@
         const msgIA = data.choices[0].message.content.trim();
         enviarMensagem(msgIA);
       } catch (e) {
-        enviarMensagem("Erro ao conectar com a IA simbólica.");
+        enviarMensagem("Pulso sem intenção com IA simbólica.");
         console.error(e);
       }
     }
