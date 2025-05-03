@@ -557,7 +557,7 @@ let assistentes = [];
 // Carrega o JSON e armazena em memória
 async function carregarMetapulso() {
   try {
-    const response = await fetch('https://raw.githubusercontent.com/Kodux78k/A.Dual.Infodose/main/metapulso_70_combinacoes.json');
+    const response = await fetch('https://raw.githubusercontent.com/Kodux78k/A.Dual.Infodose/metapulso_70_combinacoes.json');
     if (!response.ok) throw new Error(`Erro: ${response.status}`);
     assistentes = await response.json();
     console.log("Assistentes carregados:", assistentes);
