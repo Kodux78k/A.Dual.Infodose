@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>dual.Infodose Chat Cinematográfico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --background-dark: linear-gradient(to bottom, #000000, #1a1a1a);
+      --background-light: linear-gradient(to bottom, #ffffff, #e0e0e0);
+      --text-dark: white;
+      --text-light: black;
+      --primary-color: #111111;
+      --secondary-color: #5e5c5e;
+    }
+    body {
+      background: var(--background-dark);
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-dark);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      transition: all 0.5s ease;
+    }
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      top: 0;
+      left: 0;
+    }
+    .svg-container {
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px;
+      height: 160px;
+      animation: pulse 2s infinite;
+      z-index: 1;
+    }
+    .svg-container object {
+      width: 100%;
+      height: 100%;
+    }
+    .response-container {
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 12px;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      min-height: 120px;
+      max-height: 600px;
+      width: 100%;
+      max-width: 450px;
+      font-size: 1.0em;
+      overflow-y: auto;
+  }
+
+    .response-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .copy-button, .paste-button {
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      transition: background 0.3s;
+      margin-right: 10px;
+    }
+    .copy-button:hover, .paste-button:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pagination button {
+      background: none;
+      border: none;
+      font-size: 1em;
+      color: rgb(111, 228, 251);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .pagination button:hover {
+      transform: scale(1.1);
+    }
+    .page {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .page.active {
+      display: block;
+      opacity: 1;
+    }
+    .input-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 99px;
+      width: 100%;
+      max-width: 500px;
+    }
+    input {
+      flex-grow: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
+      font-size: 1em;
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: inherit;
+    }
+    button {
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s infinite;
+    
+    }
+    .icon {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+    @keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.response-block {
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  animation: fadeIn 0.8s ease forwards;
+  transition: background 0.5s ease;
+    font-size: 0.9em; /* reduzido para melhor leitura em mobile */
+  line-height: 1.4em;
+}
+h3 {
+  font-size: 1.1em;
+}
+
+/* Gradientes leves por bloco */
+.response-block.intro {
+  background: linear-gradient(135deg, rgba(0,255,255,0.2), rgba(0,100,100,0.1));
+  border-left: 4px solid #00ffff;
+}
+
+.response-block.middle {
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(50,50,50,0.1));
+  border-left: 4px solid #ffffff66;
+}
+
+.response-block.ending {
+  background: linear-gradient(135deg, rgba(255,0,255,0.2), rgba(100,0,100,0.1));
+  border-left: 4px solid #ff00ff;
+}
+
+.page {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+}
+
+.page.active {
+  display: block;
+  opacity: 1;
+}
+    .response-block:hover {
+  box-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="svg-container">
+    <object data="3D_logo_Dual_Infodose_9.svg" type="image/svg+xml"></object>
+  </div>
+  <div class="response-container" id="response">
+    <div class="page active"><strong>clique no ◉ , e diga um Oi.</strong> Do seu jeito. <strong>Sempre </strong>único.<strong> Sempre </strong>seu.</div>
+    <div class="response-controls">
+      <div style="display: flex; align-items: center;">
+        <div class="copy-button" onclick="copyResponse()" title="Copiar resposta">
+<svg class="icon" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" stroke="white" fill="none"/>
+    <rect x="6" y="6" width="12" height="12" stroke="white" fill="none"/>
+  </svg>
+</div>
+        <div class="paste-button" onclick="pasteToInput()" title="Colar no campo de envio">
+<svg class="icon" viewBox="0 0 24 24">
+    <circle class="paste-icon-circle" cx="12" cy="12" r="10" stroke="white" fill="none"/>
+    <line class="paste-icon-line" x1="12" y1="4" x2="12" y2="20" stroke="white" fill="none"/>
+  </svg>
+</div>
+      </div>
+      <div class="pagination">
+        <button onclick="changePage(-1)">⟵</button>
+        <span id="pageIndicator">1 / 1</span>
+        <button onclick="changePage(1)">⟶</button>
+      </div>
+    </div>
+  </div>
+  <div class="input-container">
+    <input id="userInput" placeholder="Diga: 'oi, Dual'..." type="text" />
+    <button onclick="sendMessage()">➤</button>
+    <button onclick="startVoice()">
+      <object data="Reset_buttom_Dual-Infodose.svg" type="image/svg+xml" width="36" height="36"></object>
+    </button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    const responseContainer = document.getElementById('response');
+    let currentPage = 0, totalPages = 1, pages = [];
+
+
+    function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (text === '') return;
+
+  generateBotReply(text);
+  input.value = '';
+}
+let assistenteAtivo = false;
+let configuracaoAssistente = {};
+
+function verificarAtivacao(prompt) {
+  const padraoAtivacao = /Nome do Assistente:\s*(.+)[\r\n]+Tríade de Emojis:\s*(.+)[\r\n]+Frase Pulsante:\s*(.+)[\r\n]+([\s\S]+)/i;
+  const correspondencia = prompt.match(padraoAtivacao);
+
+  if (correspondencia) {
+    assistenteAtivo = true;
+    configuracaoAssistente = {
+      nome: correspondencia[1].trim(),
+      emojis: correspondencia[2].trim(),
+      frase: correspondencia[3].trim(),
+      descricao: correspondencia[4].trim()
+    };
+    console.log("Assistente ativado:", configuracaoAssistente);
+    // Aqui você pode atualizar a interface do usuário conforme necessário
+  }
+}
+function generateBotReply(userText) {
+  const responseDiv = document.getElementById('response');
+  let reply = "";
+
+  const lower = userText.toLowerCase();
+
+  // Verifica se é um prompt de ativação
+  verificarAtivacao(userText);
+
+  if (lower.includes("olá") || lower.includes("oi")) {
+    reply = "Olá! Dual.Infodose ativa, ⚡️ pulso reconhecido. Quer ajuda? só falar! Infodose, ajuda!";
+    renderPaginatedResponse(reply);
+    speak(reply);
+  } else if (lower.includes("ajuda")) {
+    reply = "Explore o mundo Dual.! clique, descubra, Pergunte o que quiser. Como você gostaria de me chamar?";
+    renderPaginatedResponse(reply);
+    speak(reply);
+  } else {
+    callOpenRouter(userText);
+  }
+}
+
+function callOpenRouter(userText) {
+  const responseDiv = document.getElementById('response');
+  responseDiv.querySelectorAll('.page').forEach(el => el.remove());
+  const loading = document.createElement('div');
+  loading.className = 'page active';
+  loading.textContent = "Pulso enviado... Recebendo vibração...";
+  responseDiv.insertBefore(loading, responseDiv.querySelector('.response-controls'));
+  totalPages = 1;
+  currentPage = 0;
+  document.getElementById('pageIndicator').textContent = `1 / 1`;
+
+  // Recupera o histórico do localStorage ou inicializa como um array vazio
+const MAX_MENSAGENS = 50;
+let historicoMensagens = JSON.parse(localStorage.getItem("historicoMensagens")) || [];
+
+// Adiciona nova mensagem
+historicoMensagens.push({ role: "user", content: novaMensagem });
+
+// Limita o tamanho do histórico
+if (historicoMensagens.length > MAX_MENSAGENS) {
+  historicoMensagens = historicoMensagens.slice(-MAX_MENSAGENS);
+}
+
+localStorage.setItem("historicoMensagens", JSON.stringify(historicoMensagens));
+// Envia a requisição com o histórico completo
+fetch("https://openrouter.ai/api/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer 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`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "qwen/qwen2.5-vl-3b-instruct:free",
+    messages: historicoMensagens,
+    temperature: 0.7
+  })
+})
+.then(response => response.json())
+.then(data => {
+  // Adiciona a resposta do assistente ao histórico
+  historicoMensagens.push({ role: "assistant", content: data.choices[0].message.content });
+
+  // Atualiza o localStorage com o novo histórico
+  localStorage.setItem("historicoMensagens", JSON.stringify(historicoMensagens));
+
+  // Aqui você pode atualizar a interface com a resposta do assistente
+})
+  .then(response => response.json())
+  .then(data => {
+    let reply = data.choices[0].message.content.trim();
+    renderPaginatedResponse(reply);
+    speak(reply);
+  })
+  .catch(error => {
+    console.error('Erro ao consultar OpenRouter:', error);
+    const errorMsg = "Erro ao conectar com a IA. Tente novamente.";
+    renderPaginatedResponse(errorMsg);
+    speak(errorMsg);
+  });
+}
+// Salvar configuração
+localStorage.setItem('configuracaoAssistente', JSON.stringify(configuracaoAssistente));
+
+// Recuperar configuração ao carregar a página
+const configSalva = localStorage.getItem('configuracaoAssistente');
+if (configSalva) {
+  configuracaoAssistente = JSON.parse(configSalva);
+  assistenteAtivo = true;
+}
+    function renderPaginatedResponse(text) {
+  const words = text.split(' ');
+  const blockSize = Math.ceil(words.length / 3); // 3 blocos por página
+  const blocks = [];
+
+  // Quebra em blocos de texto de forma sequencial
+  for (let i = 0; i < words.length; i += blockSize) {
+    const slice = words.slice(i, i + blockSize).join(' ');
+    blocks.push(slice);
+  }
+
+  // Agrupa os blocos em trios de páginas (Recompensa-Curiosidade-Antecipação)
+  const pages = [];
+  for (let i = 0; i < blocks.length; i += 3) {
+    const pageBlocks = [
+      blocks[i] || '',
+      blocks[i + 1] || '',
+      blocks[i + 2] || ''
+    ];
+
+    const formattedHTML = `
+      <div class="response-block intro fade-in">
+        <h3>🎁 Recompensa Inicial</h3>
+        <p><strong>${highlightText(pageBlocks[0])}</strong></p>
+      </div>
+      <div class="response-block middle fade-in">
+        <h3>👁️ Exploração e Curiosidade</h3>
+        <p>${highlightText(pageBlocks[1])}</p>
+      </div>
+      <div class="response-block ending fade-in">
+        <h3>⚡️Antecipação Vibracional</h3>
+        <p><strong>${highlightText(pageBlocks[2])}</strong></p>
+      </div>
+      <p style="margin-top: 20px; font-size: 0.8em;"><em>Do seu jeito. <strong>Sempre</strong> único. <strong>Sempre</strong> seu.</em></p>
+    `;
+    pages.push(formattedHTML);
+  }
+
+  // Atualiza DOM com a primeira página
+  const responseDiv = document.getElementById('response');
+  responseDiv.querySelectorAll('.page').forEach(el => el.remove());
+
+  const pageDiv = document.createElement('div');
+  pageDiv.className = 'page active';
+  pageDiv.innerHTML = pages[0];
+  responseDiv.insertBefore(pageDiv, responseDiv.querySelector('.response-controls'));
+
+  window.pages = pages;
+  window.totalPages = pages.length;
+  window.currentPage = 0;
+
+  document.getElementById('pageIndicator').textContent = `1 / ${pages.length}`;
+}
+
+function splitTextInBlocks(text) {
+  const words = text.split(' ');
+  const pages = splitTextIntoPages(responseText, 3);
+ajustarTamanhoContainer(pages);
+  const totalWords = words.length;
+  const intro = words.slice(0, Math.floor(totalWords * 0.25)).join(' ');
+  const middle = words.slice(Math.floor(totalWords * 0.25), Math.floor(totalWords * 0.75)).join(' ');
+  const ending = words.slice(Math.floor(totalWords * 0.75)).join(' ');
+  return [intro, middle, ending];
+}
+function ajustarTamanhoContainer(pages) {
+  const container = document.querySelector('.response-container');
+  const baseWidth = 500;
+  const minWidth = 320;
+  const ajuste = Math.min(pages.length * 30, 150);
+
+  const novaLargura = baseWidth - ajuste;
+  container.style.maxWidth = `${Math.max(minWidth, novaLargura)}px`;
+
+  // Ajuste de fonte proporcional
+  const baseFontSize = 16; // em px
+  const minFontSize = 12;
+  const novaFonte = baseFontSize - Math.min(pages.length, 5); // Reduz 1px por página até no máx. 5 páginas
+  container.style.fontSize = `${Math.max(minFontSize, novaFonte)}px`;
+}
+function typeTextInBlocks(pageDiv, fullText) {
+  const words = fullText.split(' ');
+  const blockSize = Math.ceil(words.length / 3);
+  const intro = words.slice(0, blockSize).join(' ');
+  const middle = words.slice(blockSize, blockSize * 2).join(' ');
+  const ending = words.slice(blockSize * 2).join(' ');
+
+  const introDiv = pageDiv.querySelector('.intro p');
+  const middleDiv = pageDiv.querySelector('.middle p');
+  const endingDiv = pageDiv.querySelector('.ending p');
+
+  let index = 0;
+  let current = 'intro';
+  let text = intro;
+  let target = introDiv;
+
+  introDiv.textContent = '';
+  middleDiv.textContent = '';
+  endingDiv.textContent = '';
+
+  function typeNext() {
+    if (index < text.length) {
+      target.textContent += text[index];
+      index++;
+      setTimeout(typeNext, 15); // velocidade da digitação
+    } else {
+      if (current === 'intro') {
+        current = 'middle';
+        text = middle;
+        target = middleDiv;
+      } else if (current === 'middle') {
+        current = 'ending';
+        text = ending;
+        target = endingDiv;
+      } else {
+        return; // Fim da digitação dos 3 blocos
+      }
+      index = 0;
+      setTimeout(typeNext, 300); // pausa entre blocos
+    }
+  }
+
+  typeNext();
+}
+    function updateResponsePages() {
+      const responseDiv = document.getElementById('response');
+      responseDiv.querySelectorAll('.page').forEach(el => el.remove());
+      pages.forEach((text, index) => {
+  const pageDiv = document.createElement('div');
+  pageDiv.className = 'page' + (index === 0 ? ' active' : '');
+  pageDiv.innerHTML = `
+    <div class="response-block intro"></div>
+    <div class="response-block middle"></div>
+    <div class="response-block ending"></div>
+  `;
+  responseDiv.insertBefore(pageDiv, responseDiv.querySelector('.response-controls'));
+
+  if (index === 0) {
+    typeTextInBlocks(pageDiv, text);
+  } else {
+    const [intro, middle, ending] = splitTextInBlocks(text);
+    pageDiv.querySelector('.intro').textContent = intro;
+    pageDiv.querySelector('.middle').textContent = middle;
+    pageDiv.querySelector('.ending').textContent = ending;
+  }
+});
+      document.getElementById('pageIndicator').textContent = `${currentPage + 1} / ${totalPages}`;
+    }
+
+    function changePage(offset) {
+      const newPage = currentPage + offset;
+      if (newPage < 0 || newPage >= totalPages) return;
+      const pagesDOM = document.querySelectorAll('.response-container .page');
+      pagesDOM[currentPage].classList.remove('active');
+      pagesDOM[newPage].classList.add('active');
+      currentPage = newPage;
+      document.getElementById('pageIndicator').textContent = `${currentPage + 1} / ${totalPages}`;
+    }
+
+    function highlightText(text) {
+  return text
+    .split(' ')
+    .map(word => `<span style="letter-spacing: 0.5px;">${word}</span>`)
+    .join(' ');
+}
+
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text + " Do seu jeito, sempre único, sempre seu.");
+      utterance.lang = 'pt-BR';
+      speechSynthesis.speak(utterance);
+    }
+
+    function copyResponse() {
+      const activePage = document.querySelector('.page.active');
+      if (activePage) {
+        navigator.clipboard.writeText(activePage.innerText);
+      }
+    }
+
+    async function pasteToInput() {
+      try {
+        const text = await navigator.clipboard.readText();
+        document.getElementById('userInput').value = text;
+      } catch (err) {
+        console.error('Erro ao colar texto:', err);
+      }
+    }
+
+    function startVoice() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'pt-BR';
+      recognition.start();
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('userInput').value = transcript;
+        sendMessage();
+      };
+    }
+let assistentes = [];
+
+// Carrega o JSON e armazena em memória
+async function carregarMetapulso() {
+  try {
+    const response = await fetch('https://raw.githubusercontent.com/Kodux78k/A.Dual.Infodose/main/metapulso_70_combinacoes.json');
+    if (!response.ok) throw new Error(`Erro: ${response.status}`);
+    assistentes = await response.json();
+    console.log("Assistentes carregados:", assistentes);
+  } catch (error) {
+    console.error("Erro ao carregar assistentes:", error);
+  }
+}
+
+// Detecta e ativa assistente pela tríade de emojis
+function ativarAssistentePorTriade(inputTexto) {
+  const emojisInput = Array.from(inputTexto.match(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu) || []);
+
+  if (emojisInput.length < 3) return null;
+
+  for (const assistente of assistentes) {
+    const emojis = assistente.triade || [];
+
+    // Verifica se todos os emojis da tríade estão presentes no input
+    const match = emojis.every(e => emojisInput.includes(e));
+    if (match) {
+      console.log(`Assistente ativado: ${assistente.nome}`);
+      console.log(`Poderes: ${assistente.poderes}`);
+      console.log(`Frase vibracional: ${assistente.frase}`);
+
+      // Chama a função de fala para falar a frase vibracional
+      falar(assistente.frase);
+
+      // Retorna o assistente ativado
+      return assistente;
+    }
+  }
+
+  return null;
+}
+
+// Função para falar a frase do assistente usando speechSynthesis
+function falar(frase) {
+  const utterance = new SpeechSynthesisUtterance(frase);
+  utterance.lang = 'pt-BR'; // Define o idioma da fala (português)
+  speechSynthesis.speak(utterance);
+}
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 30, density: { enable: true, value_area: 600 } },
+        color: { value: ['#00ffff', '#ff00ff'] },
+        shape: { type: 'circle' },
+        opacity: { value: 0.4, random: true },
+        size: { value: 3, random: true },
+        move: { enable: true, speed: 1.2, direction: 'none', out_mode: 'out' }
+      },
+      retina_detect: true
+    });
+  </script>
+</body>
+</html>
