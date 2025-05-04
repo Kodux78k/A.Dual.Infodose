@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interface Rotativa Animada</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0a0a0a;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    #botao-central {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      font-size: 2rem;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+      z-index: 10;
+      transition: transform 0.2s;
+    }
+
+    #botao-central:active {
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    svg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 320px;
+      height: 320px;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+    }
+
+    .ring {
+      transform-origin: center;
+      animation: pulse 2.5s infinite ease-in-out;
+      transition: transform 0.2s ease-out, filter 0.3s;
+    }
+
+    .ring-inner {
+      animation: spin-inner 20s linear infinite;
+    }
+
+    .ring-middle {
+      animation: spin-middle 30s linear infinite;
+    }
+
+    .ring-outer {
+      animation: spin-outer 40s linear infinite;
+    }
+
+    .ring.active {
+      filter: drop-shadow(0 0 10px #fff);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    @keyframes spin-inner {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes spin-middle {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(-360deg); }
+    }
+
+    @keyframes spin-outer {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .assistente-box {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.85);
+      color: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      z-index: 9999;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      width: 80%;
+      max-width: 500px;
+    }
+
+    .assistente-box pre {
+      background: rgba(255,255,255,0.05);
+      padding: 10px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      margin-top: 10px;
+      font-family: monospace;
+    }
+
+    .assistente-box button {
+      margin-top: 10px;
+      margin-right: 10px;
+      background: #333;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .assistente-box button:hover {
+      background: #555;
+    }
+  
+    .no-spin {
+      animation: none !important;
+    }
+    </style>
+
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div id="botao-central">⭕️</div>
+
+  <svg viewBox="0 0 200 200">
+    <defs>
+      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#8be9fd"/>
+        <stop offset="100%" stop-color="#50fa7b"/>
+      </linearGradient>
+      <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#ffb86c"/>
+        <stop offset="100%" stop-color="#ff79c6"/>
+      </linearGradient>
+      <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#f8f8f2"/>
+        <stop offset="100%" stop-color="#bd93f9"/>
+      </linearGradient>
+    </defs>
+    <g id="outer-ring" class="ring ring-outer">
+      <circle cx="100" cy="100" r="85" stroke="url(#grad3)" stroke-width="12" fill="none"/>
+    </g>
+    <g id="middle-ring" class="ring ring-middle">
+      <circle cx="100" cy="100" r="65" stroke="url(#grad2)" stroke-width="18" stroke-dasharray="60 20" fill="none"/>
+    </g>
+    <g id="inner-ring" class="ring ring-inner">
+      <circle cx="100" cy="100" r="45" stroke="url(#grad1)" stroke-width="8" stroke-dasharray="6 10" fill="none"/>
+    </g>
+  </svg>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js">
+    function copiarPrompt(texto) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(texto)
+          .then(() => alert("Prompt copiado!"))
+          .catch(() => alert("Falha ao copiar o prompt."));
+      } else {
+        alert("Clipboard API não suportada.");
+      }
+    }
+    </script>
+
+  <script>
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 100 },
+        color: { value: "#ffffff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.2 },
+        size: { value: 2 },
+        move: { enable: true, speed: 1 }
+      },
+      interactivity: {
+        events: { onhover: { enable: true, mode: "repulse" }},
+        modes: { repulse: { distance: 80 }}
+      },
+      retina_detect: true
+    });
+
+    const rings = {
+      "inner-ring": { angle: 0 },
+      "middle-ring": { angle: 0 },
+      "outer-ring": { angle: 0 }
+    };
+
+    let activeRing = null;
+    let lastRotation = { "inner-ring": 0, "middle-ring": 0, "outer-ring": 0 };
+
+    function atualizarGradientes(index) {
+      const cor1 = `hsl(${index * 2.12}, 100%, 70%)`;
+      const cor2 = `hsl(${(index * 2.12 + 180) % 360}, 100%, 70%)`;
+
+      document.querySelector("#grad1 stop[offset='0%']").setAttribute("stop-color", cor1);
+      document.querySelector("#grad1 stop[offset='100%']").setAttribute("stop-color", cor2);
+      document.querySelector("#grad2 stop[offset='0%']").setAttribute("stop-color", cor2);
+      document.querySelector("#grad2 stop[offset='100%']").setAttribute("stop-color", cor1);
+      document.querySelector("#grad3 stop[offset='0%']").setAttribute("stop-color", cor1);
+      document.querySelector("#grad3 stop[offset='100%']").setAttribute("stop-color", cor2);
+    }
+
+    function detectarRotacao(id, novoAngulo) {
+      const dif = Math.abs(novoAngulo - lastRotation[id]);
+      if (dif >= 5.17) {
+        const index = Math.floor((novoAngulo % 360) / 5.17);
+        atualizarGradientes(index);
+        lastRotation[id] = novoAngulo;
+      }
+    }
+
+    document.querySelectorAll('.ring').forEach(ring => {
+      ring.addEventListener('pointerdown', () => {
+        document.querySelectorAll('.ring').forEach(r => r.classList.remove('active'));
+        ring.classList.add('active'); ring.classList.add('no-spin');
+        activeRing = ring;
+      });
+    });
+
+    document.addEventListener('pointermove', e => {
+      if (!activeRing) return;
+      const rect = activeRing.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180 / Math.PI;
+      const id = activeRing.id;
+      rings[id].angle = angle;
+      activeRing.style.transform = `rotate(${angle}deg)`;
+      detectarRotacao(id, angle);
+    });
+
+    
+    document.addEventListener('pointerup', () => {
+      if (activeRing) activeRing.classList.remove('no-spin');
+
+      document.querySelectorAll('.ring').forEach(r => r.classList.remove('active'));
+      activeRing = null;
+    });
+
+    const cores = ["Azul", "Vermelho", "Verde", "Amarelo", "Roxo", "Laranja", "Dourado"];
+    const movimentos = ["Silêncio", "Movimento"];
+    const elementos = ["Água", "Fogo", "Madeira", "Terra", "Metal"];
+
+    function gerarTriadeAleatoria() {
+      const cor = cores[Math.floor(Math.random() * cores.length)];
+      const movimento = movimentos[Math.floor(Math.random() * movimentos.length)];
+      const elemento = elementos[Math.floor(Math.random() * elementos.length)];
+      return `${cor}|${movimento}|${elemento}`;
+    }
+
+    function exibirTriade(triade, dados) {
+      const display = document.createElement("div");
+      display.classList.add('assistente-box');
+      const promptCompleto = dados.prompt || 'Prompt não disponível.';
+      display.innerHTML = `<strong>${dados.emoji || '✨'} ${dados.nome}</strong><br>${triade}<br><em>${dados.frase}</em><pre>${promptCompleto}</pre>
+        <button onclick="window.location.href='index_menu.html'">Ativar</button>
+        <button onclick="copiarPrompt(promptCompleto)">Copiar Prompt</button>`;
+      document.body.appendChild(display);
+      setTimeout(() => display.remove(), 8000);
+    }
+
+    function tocarSomSuave() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(432, ctx.currentTime);
+      g.gain.setValueAtTime(0.05, ctx.currentTime);
+      o.connect(g).connect(ctx.destination);
+      o.start();
+      o.stop(ctx.currentTime + 1);
+    }
+
+    async function ativarAssistente() {
+      const res = await fetch("metapulso_70_combinacoes.json");
+      const data = await res.json();
+      const chave = gerarTriadeAleatoria();
+      const entrada = data[chave];
+
+      if (entrada) {
+        localStorage.setItem("configuracaoAssistente", JSON.stringify({ chave, ...entrada }));
+        localStorage.setItem("assistenteAtivo", entrada.tema || "default");
+        exibirTriade(chave, entrada);
+        tocarSomSuave();
+      } else {
+        alert(`Tríade '${chave}' não encontrada.`);
+      }
+    }
+
+    document.getElementById("botao-central").addEventListener("click", ativarAssistente);
+  
+    function copiarPrompt(texto) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(texto)
+          .then(() => alert("Prompt copiado!"))
+          .catch(() => alert("Falha ao copiar o prompt."));
+      } else {
+        alert("Clipboard API não suportada.");
+      }
+    }
+    </script>
+
+</body>
+</html>
