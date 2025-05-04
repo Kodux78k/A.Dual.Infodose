@@ -283,11 +283,7 @@ function generateBotReply(userText) {
   verificarAtivacao(userText);
 
   if (lower.includes("olá") || lower.includes("oi")) {
-    reply = "Olá! Dual.Infodose ativa, ⚡️ pulso reconhecido. Quer mais? só falar! Infodose, Quero mais!";
-    renderPaginatedResponse(reply);
-    speak(reply);
-  } else if (lower.includes("quero mais")) {
-    reply = "Eu sou sua Dual.Infodose, um assistente UPA, em pulso sincronizado com você. Sempre do seu jeito. Sempre único, Sempre seu. Gostaria de me nomear ou ativar de acordo com seu momento atual? Esse é um dos meus poderes secretos. Apenas diga: Ajuda";
+    reply = "Olá! Dual.Infodose ativa, ⚡️ pulso reconhecido. Quer ajuda? só falar! Infodose, ajuda!";
     renderPaginatedResponse(reply);
     speak(reply);
   } else if (lower.includes("ajuda")) {
