@@ -361,7 +361,7 @@ h3 {
         try {
           const slug = configuracaoAssistente.nome.toLowerCase()
             .replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
-          const urlJson = `https://raw.githubusercontent.com/Kodux-78k/a.Infodose/main/assistentes_ativacao.json ${slug}`;
+          const urlJson = `https://raw.githubusercontent.com/Kodux78k/A.Dual.Infodose/assistentes_ativacao.json ${slug}`;
           const res = await fetch(urlJson);
           if (!res.ok) throw new Error(res.status);
           const cfg = await res.json();
