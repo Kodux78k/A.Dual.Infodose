@@ -277,7 +277,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let assistenteAtivo = false;
   let configuracaoAssistente = {};
   let assistentes = [];
-
+  let infodoseTreinamento = '';
+  let estadoInfodoseAtivado = false;
   /* ─── CONSTANTE DE ATIVAÇÃO ────────────────────────────────────────────── */
   const ACTIVATION_PHRASE = 'oi dual';
 
@@ -355,10 +356,11 @@ const sendMessage = () => {
     speakRaw('Dual Infodose ativa');
 
     // FETCH DO ARQUIVO .TXT com o conteúdo simbólico
-    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-5.txt')
+    fetch('Super_Treinamento_Universal_Dual_Infodose_PERSISTENTE.txt')
       .then(response => response.text())
       .then(treinamento => {
-        callOpenRouter(treinamento); // envia todo o .txt como prompt system
+        infodoseTreinamento = treinamento; // salva treinamento simbólico persistente
+        callOpenRouter(treinamento);       // envia como role system
       })
       .catch(error => {
         console.error('Erro ao carregar o treinamento simbólico:', error);
