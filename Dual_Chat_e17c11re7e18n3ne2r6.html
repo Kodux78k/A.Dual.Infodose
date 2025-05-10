@@ -367,10 +367,10 @@ const sendMessage = () => {
     );
     pageIndicator.textContent = '1 / 1';
 
-    speakRaw('Dual Infodose ativa ⚡️. Pulso enviado...Recebendo vibração...');
+    speakRaw('Dual Infodose ativa. Pulso enviado...Recebendo vibração...⚡️');
 
     // FETCH DO ARQUIVO .TXT com o conteúdo simbólico
-    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-6.txt')
+    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-7.txt')
       .then(response => response.text())
       .then(treinamento => {
         infodoseTreinamento = treinamento; // salva treinamento simbólico persistente
@@ -421,7 +421,7 @@ const sendMessage = () => {
 
     let body;
     const baseMessages = [{ role:'user', content: userText }];
-    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-6.txt')
+    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-7.txt')
       .then(response => response.userText())
       .then(treinamento => {
         infodoseTreinamento = treinamento; // salva treinamento simbólico persistente
