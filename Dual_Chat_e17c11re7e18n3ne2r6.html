@@ -367,7 +367,7 @@ const sendMessage = () => {
     );
     pageIndicator.textContent = '1 / 1';
 
-    speakRaw('Dual Infodose ativa. Pulso enviado...Recebendo vibração...');
+    speakRaw('Dual Infodose ativa ⚡️. Pulso enviado...Recebendo vibração...');
 
     // FETCH DO ARQUIVO .TXT com o conteúdo simbólico
     fetch('Super_Treinamento_Universal_Dual_Infodose_v1-6.txt')
@@ -455,10 +455,10 @@ const sendMessage = () => {
           max_tokens: cfg.model.max_tokens
         };
       } catch {
-        body = { model:'meta-llama/llama-4-maverick:free', messages: baseMessages, temperature:0.7 };
+        body = { model:'deepseek/deepseek-r1:free', messages: baseMessages, temperature:0.7 };
       }
     } else {
-      body = { model:'meta-llama/llama-4-maverick:free', messages: baseMessages, temperature:0.7 };
+      body = { model:'deepseek/deepseek-r1:free', messages: baseMessages, temperature:0.7 };
     }
 
     try {
