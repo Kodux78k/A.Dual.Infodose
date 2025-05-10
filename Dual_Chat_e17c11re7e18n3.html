@@ -375,23 +375,17 @@ const sendMessage = () => {
 
   /* ─── ENVIO “NORMAL” DE MENSAGEM ───────────────────────────────────────── */
   function sendNormalMessage(text) {
-    // renderiza a mensagem do usuário
-    const pagina = createEl(
-      'div',
-      'page active',
-      `<strong>Você:</strong> ${text}`
-    );
-    responseEl.insertBefore(
-      pagina,
-      responseEl.querySelector('.response-controls')
-    );
+  const pagina = createEl('div', 'page active', `<strong>Você:</strong> ${text}`);
+  responseEl.insertBefore(pagina, responseEl.querySelector('.response-controls'));
+  updatePageIndicator();
 
-    // atualiza indicador (se quiser iniciar contagem própria)
-    updatePageIndicator();
-
-    // continua fluxo de IA
-    generateBotReply(text);
+  if (estadoInfodoseAtivado && infodoseTreinamento) {
+    // Mantém o estado simbólico ativo nas respostas
+    callOpenRouter(infodoseTreinamento + `\n\nUsuário diz: ${text}`);
+  } else {
+    generateBotReply(text); // fluxo padrão
   }
+} 
 
   /* ─── GERAÇÃO DA RESPOSTA ───────────────────────────────────────────────── */
   const generateBotReply = userText => {
@@ -413,7 +407,13 @@ const sendMessage = () => {
 
     let body;
     const baseMessages = [{ role:'user', content: userText }];
-
+    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-5.txt')
+      .then(response => response.userText())
+      .then(treinamento => {
+        infodoseTreinamento = treinamento; // salva treinamento simbólico persistente
+        callOpenRouter(treinamento);       // envia como role system
+      })
+  
     if (assistenteAtivo) {
       try {
         const urlJson = `https://raw.githubusercontent.com/Kodux78k/a.infodose/main/assistentes_ativacao.json`;
@@ -461,6 +461,7 @@ const sendMessage = () => {
       const reply = data.choices[0].message.content.trim();
       responseEl.removeChild(loading);
       handleSimpleReply(reply);
+    
     } catch (err) {
       console.error('Erro OpenRouter:', err);
       handleSimpleReply('Erro ao conectar com a IA. Tente novamente.');
