@@ -328,37 +328,48 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   /* ─── ENVIO DE MENSAGEM COM ATIVAÇÃO ───────────────────────────────────── */
-  const sendMessage = () => {
-    const text = input.value.trim().toLowerCase();
-    if (!text) return;                // nada para enviar
+const sendMessage = () => {
+  const text = input.value.trim().toLowerCase();
+  if (!text) return; // nada para enviar
 
-    input.value = '';
-    clearPages();
+  input.value = '';
+  clearPages();
 
-    if (text === ACTIVATION_PHRASE) {
-      // — fluxo de ativação
-      assistenteAtivo = true;
-      configuracaoAssistente = {};   // ou recarregue config existente
-      saveConfig();
+  if (text === ACTIVATION_PHRASE) {
+    // — fluxo de ativação
+    assistenteAtivo = true;
+    configuracaoAssistente = {};
+    saveConfig();
 
-      const pagina = createEl(
-        'div',
-        'page active',
-        `<strong>Dual Infodose ativa</strong>`
-      );
-      responseEl.insertBefore(
-        pagina,
-        responseEl.querySelector('.response-controls')
-      );
-      pageIndicator.textContent = '1 / 1';
+    const pagina = createEl(
+      'div',
+      'page active',
+      `<strong>Dual Infodose ativa</strong>`
+    );
+    responseEl.insertBefore(
+      pagina,
+      responseEl.querySelector('.response-controls')
+    );
+    pageIndicator.textContent = '1 / 1';
 
-      speakRaw('Dual Infodose ativa');
-      callOpenRouter('Oi dual, ativar ! se apresente como assistente U.P.A dual.Infodose. ativa uma fórmula dopamínica simbiótica. Use estas fórmulas como catalisadores de engajamento, criação e expansão GPT-UPA.');
-    } else {
-      // fluxo padrão
-      sendNormalMessage(text);
-    }
-  };
+    speakRaw('Dual Infodose ativa');
+
+    // FETCH DO ARQUIVO .TXT com o conteúdo simbólico
+    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-5.txt')
+      .then(response => response.text())
+      .then(treinamento => {
+        callOpenRouter(treinamento); // envia todo o .txt como prompt system
+      })
+      .catch(error => {
+        console.error('Erro ao carregar o treinamento simbólico:', error);
+        callOpenRouter('Erro ao ativar Dual Infodose. Verifique o treinamento.');
+      });
+
+  } else {
+    // fluxo padrão
+    sendNormalMessage(text);
+  }
+};
 
   /* ─── ENVIO “NORMAL” DE MENSAGEM ───────────────────────────────────────── */
   function sendNormalMessage(text) {
