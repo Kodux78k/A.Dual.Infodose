@@ -353,10 +353,10 @@ const sendMessage = () => {
     );
     pageIndicator.textContent = '1 / 1';
 
-    speakRaw('Dual Infodose ativa');
+    speakRaw('Dual Infodose ativa. Pulso enviado...Interpretando vibração...');
 
     // FETCH DO ARQUIVO .TXT com o conteúdo simbólico
-    fetch('Super_Treinamento_Universal_Dual_Infodose_PERSISTENTE.txt')
+    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-6.txt')
       .then(response => response.text())
       .then(treinamento => {
         infodoseTreinamento = treinamento; // salva treinamento simbólico persistente
