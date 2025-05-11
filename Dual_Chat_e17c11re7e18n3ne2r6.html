@@ -31,7 +31,7 @@
       width: 100%;
       height: 100%;
       z-index: 0;
-      top: 0
+      top: 0;
       left: 0;
     }
     .svg-container {
@@ -254,9 +254,6 @@ h3 {
     <button id="voiceBtn" title="Falar">
       <object data="Reset_buttom_Dual-Infodose.svg" type="image/svg+xml" width="36" height="36"></object>
     </button>
-    <button id="koblluxVoiceBtn" title="Ativar Voz Kobllux">
-      <object data="Kobllux_Voice_Icon.svg" type="image/svg+xml" width="36" height="36"></object>
-    </button>
   </div>
 
   <!-- scripts -->
@@ -273,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextBtn          = document.querySelector('[data-action="next"]');
   const sendBtn          = document.getElementById('sendBtn');
   const voiceBtn         = document.getElementById('voiceBtn');
-  const koblluxVoiceBtn  = document.getElementById('koblluxVoiceBtn');
 
   /* ─── ESTADO GLOBAL ─────────────────────────────────────────────────────── */
   let currentPage = 0;
@@ -553,28 +549,6 @@ const sendMessage = () => {
       sendMessage();
     };
   };
-
-  const speakKobllux = text => {
-    const u = new SpeechSynthesisUtterance();
-    const voices = speechSynthesis.getVoices();
-    const koblluxVoice = voices.find(v => v.lang === 'pt-BR' && v.name.toLowerCase().includes('luciana')) || voices[0];
-    u.voice = koblluxVoice;
-    u.lang = 'pt-BR';
-    u.pitch = 0.8; // Tom mais grave para "Kobllux"
-    u.rate = 0.9;  // Velocidade reduzida
-    u.volume = 1;
-    u.text = `${text}. Kobllux vibra nas sombras... Sempre em mistério... Sempre em expansão.`;
-    speechSynthesis.speak(u);
-  };
-
-  koblluxVoiceBtn.addEventListener('click', () => {
-    const text = input.value.trim();
-    if (text) {
-      speakKobllux(text);
-    } else {
-      speakKobllux('Kobllux ativado. Sombras alinhadas... Mistério em expansão...');
-    }
-  });
 
   /* ─── INICIALIZAÇÃO ─────────────────────────────────────────────────────── */
   loadConfig();
