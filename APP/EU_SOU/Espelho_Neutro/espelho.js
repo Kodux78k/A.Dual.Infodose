@@ -1,0 +1,1 @@
+# espelho.js - conteúdo simbólico placeholder
