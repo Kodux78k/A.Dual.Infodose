@@ -1,1 +1,1 @@
-
+# backend.js - conteúdo simbólico placeholder
