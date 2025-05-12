@@ -1,1 +1,1 @@
-
+# logica_viva.py - conteúdo simbólico placeholder

@@ -1,0 +1,1 @@
+# verificador_simbolico.py - conteúdo simbólico placeholder
