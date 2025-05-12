@@ -1,1 +1,1 @@
-
+# particulas.js - conteúdo simbólico placeholder
