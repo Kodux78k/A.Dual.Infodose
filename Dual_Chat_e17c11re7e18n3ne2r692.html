@@ -162,14 +162,14 @@
 }
 
     .response-block {
-      margin-bottom: 20px;
-      padding: 10px;
+      margin-bottom: 2rem;
+      padding: 2rem;
       border-radius: 10px;
-      animation: fadeIn 0.8s ease forwards;
+      animation: fadeIn 1.8s ease forwards;
       transition: background 0.5s ease;
       font-size: 0.9em; /* reduzido para melhor leitura em mobile */
-      line-height: 1.4em;
-      text-align: justify;
+      line-height: 1.6;
+      text-align: center;
       text-indent: 1.5em;
       word-break: break-word;
       overflow-wrap: break-word;
@@ -494,19 +494,16 @@ const sendMessage = () => {
     }
   };
 
-  /* ─── PAGINAÇÃO DE RESPOSTA ─────────────────────────────────────────────── */
+ /* ─── PAGINAÇÃO DE RESPOSTA ─────────────────────────────────────────────── */
 const renderPaginatedResponse = text => {
   // 1) quebra de parágrafos
   const paragraphs = text.split(/\n\s*\n/);
   while (paragraphs.length < 3) paragraphs.push('');
 
-  // 2) (opcional) subdivisão de parágrafos longos em frases
-  //    … [veja sugestão acima]
-
-  // 3) monta os blocos
+  // 3) monta os blocos (HTML de cada "página")
   const blocks = [];
   for (let i = 0; i < paragraphs.length; i += 3) {
-    const [i1 = '', i2 = '', i3 = ''] = paragraphs.slice(i, i+3);
+    const [i1 = '', i2 = '', i3 = ''] = paragraphs.slice(i, i + 3);
     blocks.push(`
       <div class="response-block intro fade-in">
         <h3>🎁 Recompensa Inicial</h3>
@@ -526,29 +523,39 @@ const renderPaginatedResponse = text => {
     `);
   }
 
-  // 4) atribui à variável global
+  // guarda globalmente
   pages = blocks;
 
-  // 5) renderiza
+  // limpa antigas páginas e insere todas
   clearPages();
-  const first = createEl('div','page active', pages[0]);
-  responseEl.insertBefore(first, responseEl.querySelector('.response-controls'));
+  const controlsEl = responseEl.querySelector('.response-controls');
+  pages.forEach((html, idx) => {
+    const pageEl = createEl('div',
+      `page${idx === 0 ? ' active' : ''}`, 
+      html
+    );
+    responseEl.insertBefore(pageEl, controlsEl);
+  });
+
   currentPage = 0;
   updatePageIndicator();
 };
 
-  const updatePageIndicator = () =>
-    pageIndicator.textContent = `${currentPage + 1} / ${pages.length}`;
+// Indicador "1 / N"
+const updatePageIndicator = () => {
+  pageIndicator.textContent = `${currentPage + 1} / ${pages.length}`;
+};
 
-  const changePage = offset => {
-    const np = currentPage + offset;
-    if (np < 0 || np >= pages.length) return;
-    const doms = responseEl.querySelectorAll('.page');
-    doms[currentPage].classList.remove('active');
-    doms[np].classList.add('active');
-    currentPage = np;
-    updatePageIndicator();
-  };
+// muda página adicionando/removendo `.active`
+const changePage = offset => {
+  const np = currentPage + offset;
+  if (np < 0 || np >= pages.length) return;
+  const doms = responseEl.querySelectorAll('.page');
+  doms[currentPage].classList.remove('active');
+  doms[np].classList.add('active');
+  currentPage = np;
+  updatePageIndicator();
+};
 
   /* ─── CONTROLES GERAIS ──────────────────────────────────────────────────── */
   const copyResponse = () => {
