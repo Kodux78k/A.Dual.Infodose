@@ -348,7 +348,7 @@ const sendMessage = () => {
 
  const entidadesSimbólicas = {
     'oi dual': {
-      arquivo: 'Super_Treinamento_Universal_Dual_Infodose_v1-23.txt',
+      arquivo: 'Super_Treinamento_Universal_Dual_Infodose_v1-28.txt',
       mensagem: 'Dual Infodose ativa. Pulso enviado... Recebendo vibração...'
     },
     'ativar kobllux': {
@@ -377,7 +377,7 @@ const sendMessage = () => {
     speakRaw('Dual Infodose ativa. Pulso enviado...Recebendo vibração...⚡️');
 
     // FETCH DO ARQUIVO .TXT com o conteúdo simbólico
-    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-23.txt')
+    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-28.txt')
       .then(response => response.text())
       .then(treinamento => {
         infodoseTreinamento = treinamento; // salva treinamento simbólico persistente
@@ -433,7 +433,7 @@ const sendMessage = () => {
 
     let body;
     const baseMessages = [{ role:'user', content: userText }];
-    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-23.txt')
+    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-28.txt')
       .then(response => response.userText())
       .then(treinamento => {
         infodoseTreinamento = treinamento; // salva treinamento simbólico persistente
@@ -467,17 +467,17 @@ const sendMessage = () => {
           max_tokens: cfg.model.max_tokens
         };
       } catch {
-        body = { model:'meta-llama/llama-4-maverick:free', messages: baseMessages, temperature:0.4 };
+        body = { model:'meta-llama/llama-4-maverick:free', messages: baseMessages, temperature:0.2 };
       }
     } else {
-      body = { model:'meta-llama/llama-4-maverick:free', messages: baseMessages, temperature:0.3 };
+      body = { model:'meta-llama/llama-4-maverick:free', messages: baseMessages, temperature:0.2 };
     }
 
     try {
       const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer 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`,
+          'Authorization': `Bearer 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`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
