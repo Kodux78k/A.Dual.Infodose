@@ -59,7 +59,7 @@
       background: rgba(0, 0, 0, 0.4);
       border-radius: 20px;
       min-height: 120px;
-      max-height: 600px;
+      max-height: 469px;
       width: 100%;
       max-width: 369px;
       font-size: 1.0em;
@@ -77,8 +77,8 @@
     }
     .copy-button, .paste-button {
       cursor: pointer;
-      padding: 9px;
-      border-radius: 9px;
+      padding: 6px;
+      border-radius: 6px;
       background: rgba(255, 255, 255, 0.05);
       transition: background 0.3s;
       margin-right: 10px;
@@ -117,7 +117,7 @@
       position: relative;
       z-index: 1;
       display: flex;
-      gap: 9px;
+      gap: 10px;
       margin: 0 auto 90px;
       width: 100%;
       max-width: 500px;
@@ -163,9 +163,9 @@
 
     .response-block {
       margin-bottom: 1rem;
-      padding: 3rem;
+      padding: 1rem;
       border-radius: 10px;
-      animation: fadeIn 0.9s ease forwards;
+      animation: fadeIn 1.8s ease forwards;
       transition: background 0.5s ease;
       font-size: 1em; /* reduzido para melhor leitura em mobile */
       line-height: 1.6;
@@ -219,7 +219,7 @@
 </head>
 <body>
   <!-- partículas de fundo -->
-  <div id="particles-js"></div>
+  <div id="particles-js"><canvas class="particles-js-canvas-el" width="1170" height="2010" style="width: 100%; height: 100%;"></canvas></div>
 
   <!-- logo SVG -->
   <div class="svg-container">
@@ -598,5 +598,6 @@ const changePage = offset => {
   voiceBtn.addEventListener('click', startVoice);
 });
 </script>
-</body>
-</html>
+
+
+</body></html>
