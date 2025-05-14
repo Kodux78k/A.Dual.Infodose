@@ -173,18 +173,12 @@
   overflow-wrap: break-word;
   cursor: pointer;
 }
-
-.response-block.clicked {
-  animation: clickPulse 0.6s ease-out;
-}
+.response-block:hover,
+.response-block.clicked,
 .response-block:active {
   animation: clickPulse 0.6s ease-out;
   box-shadow: 0 0 20px rgba(0,255,255,0.4);
-  }
-.response-block:hover {
-      box-shadow: 0 0 10px rgba(255,255,255,0.1);
-      animation: clickPulse 0.6s ease-out;
-  }
+}
     
 .play-btn {
   position: absolute;
