@@ -1,0 +1,685 @@
+<html lang="pt-BR"><head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <title>dual.Infodose Chat Cinematográfico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background-dark: linear-gradient(to bottom, #000000, #1a1a1a);
+      --background-light: linear-gradient(to bottom, #ffffff, #e0e0e0);
+      --text-dark: white;
+      --text-light: black;
+      --primary-color: #111111;
+      --secondary-color: #5e5c5e;
+    }
+    body {
+      background: var(--background-dark);
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-dark);
+      min-height: 100vh;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      transition: all 0.5s ease;
+    }
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      top: 0;
+      left: 0;
+    }
+    .svg-container {
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px;
+      height: 160px;
+      animation: pulse 2s infinite;
+      z-index: 1;
+    }
+    .svg-container object {
+      width: 100%;
+      height: 100%;
+    }
+    .response-container {
+      position: relative;
+      z-index: 1;
+      margin: 20px, auto 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 12px;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      min-height: 120px;
+      max-height: 600px;
+      width: 100%;
+      max-width: 369px;
+      font-size: 1.0em;
+      overflow-y: auto;
+  }
+
+    .response-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      gap: 10px;
+    }
+    .copy-button, .paste-button {
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      transition: background 0.3s;
+      margin-right: 10px;
+      display: flex;
+      gap: 10px
+    }
+    .copy-button:hover, .paste-button:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pagination button {
+      background: none;
+      border: none;
+      font-size: 1em;
+      color: rgb(111, 228, 251);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .pagination button:hover {
+      transform: scale(1.1);
+    }
+    .page {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .page.active {
+      display: block;
+      opacity: 1;
+    }
+    .input-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 10px;
+      margin: 0 auto 90px;
+      width: 100%;
+      max-width: 500px;
+    }
+    input {
+      flex-grow: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
+      font-size: 1em;
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: inherit;
+    }
+    button {
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s infinite;
+    
+    }
+    .icon {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+    
+@keyframes clickPulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+.response-block {
+  position: relative;
+  margin-bottom: 1rem;
+  padding: 1.6rem;
+  border-radius: 12px;
+  animation: fadeIn 1.8s ease forwards; 
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  font-size: 0.9em;
+  line-height: 1.6;
+  text-align: center;
+  text-indent: 1.5em;
+  overflow-wrap: break-word;
+  cursor: pointer;
+}
+
+.response-block.clicked {
+  animation: clickPulse 0.6s ease-out;
+}
+.response-block:active {
+  animation: clickPulse 0.6s ease-out;
+  box-shadow: 0 0 20px rgba(0,255,255,0.4);
+  }
+.response-block:hover {
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+      animation: clickPulse 0.6s ease-out;
+  }
+    
+.play-btn {
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  type: button;
+  background: transparent;
+  border: none;
+  font-size: 0.9em;
+  cursor: pointer;
+  color: rgba(255,255,255,0.6);
+  transition: color 0.2s;
+}
+.play-btn:hover {
+  color: white;
+}
+    h3 {
+      font-size: 1.1em;
+    }
+    
+    
+    /* Gradientes leves por bloco */
+    .response-block.intro {
+      background: linear-gradient(135deg, rgba(0,255,255,0.2), rgba(0,100,100,0.1));
+      border-left: 4px solid #00ffff;
+    }
+    
+    .response-block.middle {
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(50,50,50,0.1));
+      border-left: 4px solid #ffffff66;
+    }
+    
+    .response-block.ending {
+      background: linear-gradient(135deg, rgba(255,0,255,0.2), rgba(100,0,100,0.1));
+      border-left: 4px solid #ff00ff;
+    }
+    
+    .page {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out;
+    }
+    
+    .page.active {
+      display: block;
+      opacity: 1;
+    }
+        
+    .footer-text {
+      margin-top: 20px;
+      font-size: 0.8em;
+    }
+        .control-buttons {
+      display: flex;
+      gap: 10px; /* ajusta o espaçamento entre eles */
+    }
+    @keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease forwards;
+}
+  </style>
+</head>
+<body>
+  <!-- partículas de fundo -->
+  <div id="particles-js"><canvas class="particles-js-canvas-el" width="1170" height="2010" style="width: 100%; height: 100%;"></canvas></div>
+
+  <!-- logo SVG -->
+  <div class="svg-container">
+    <object data="3D_logo_Dual_Infodose_9.svg" type="image/svg+xml"></object>
+  </div>
+
+  <!-- container de respostas -->
+  <div class="response-container" id="response">
+    <div class="page active">
+      <strong>clique no ◉ , e diga um Oi.</strong> Do seu jeito.
+      <strong>Sempre</strong> único. <strong>Sempre</strong> seu.
+    </div>
+    <div class="response-controls">
+      <div class="control-buttons">
+        <button class="copy-button" title="Copiar resposta">
+          <svg class="icon" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="white" fill="none"></circle>
+            <rect x="6" y="6" width="12" height="12" stroke="white" fill="none"></rect>
+          </svg>
+        </button>
+        <button class="paste-button" title="Colar no campo de envio">
+          <svg class="icon" viewBox="0 0 24 24">
+            <circle class="paste-icon-circle" cx="12" cy="12" r="10" stroke="white" fill="none"></circle>
+            <line class="paste-icon-line" x1="12" y1="4" x2="12" y2="20" stroke="white" fill="none"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="pagination">
+        <button data-action="prev">⟵</button>
+        <span id="pageIndicator">1 / 1</span>
+        <button data-action="next">⟶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- campo de entrada do usuário -->
+  <div class="input-container">
+    <input id="userInput" placeholder="Diga: 'oi, Dual'..." type="text">
+    <button id="sendBtn" title="Enviar">➤</button>
+    <button id="voiceBtn" title="Falar">
+      <object data="Reset_buttom_Dual-Infodose.svg" type="image/svg+xml" width="36" height="36"></object>
+    </button>
+  </div>
+
+  <!-- scripts -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  /* ─── CACHE DE ELEMENTOS ───────────────────────────────────────────────── */
+  const input            = document.getElementById('userInput');
+  const responseEl       = document.getElementById('response');
+// função utilitária de rolagem suave
+  const scrollToTop = () => responseEl.scrollTo({ top: 0, behavior: 'smooth' });
+  // …o resto do seu código continua aqui:
+  const pageIndicator    = document.getElementById('pageIndicator');
+  const copyBtn          = document.querySelector('.copy-button');
+  const pasteBtn         = document.querySelector('.paste-button');
+  const prevBtn          = document.querySelector('[data-action="prev"]');
+  const nextBtn          = document.querySelector('[data-action="next"]');
+  const sendBtn          = document.getElementById('sendBtn');
+  const voiceBtn         = document.getElementById('voiceBtn');
+
+  /* ─── ESTADO GLOBAL ─────────────────────────────────────────────────────── */
+  let currentPage = 0;
+  let pages       = [];
+  let assistenteAtivo = false;
+  let configuracaoAssistente = {};
+  let assistentes = [];
+  let infodoseTreinamento = '';
+  let estadoInfodoseAtivado = false;
+  /* ─── CONSTANTE DE ATIVAÇÃO ────────────────────────────────────────────── */
+  const ACTIVATION_PHRASE = 'oi dual';
+
+  /* ─── UTILITÁRIOS ───────────────────────────────────────────────────────── */
+  const saveConfig = () =>
+    localStorage.setItem('configuracaoAssistente', JSON.stringify(configuracaoAssistente));
+  const loadConfig = () => {
+    const cfg = localStorage.getItem('configuracaoAssistente');
+    if (cfg) {
+      configuracaoAssistente = JSON.parse(cfg);
+      assistenteAtivo = true;
+    }
+  };
+
+  const clearPages = () =>
+    responseEl.querySelectorAll('.page').forEach(el => el.remove());
+  const createEl = (tag, cls, html) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html) e.innerHTML = html;
+    return e;
+  };
+  const highlightText = txt =>
+    txt.split(' ').map(w => `<span style="letter-spacing:0.5px;">${w}</span>`).join(' ');
+  const speak = txt => {
+    const u = new SpeechSynthesisUtterance(`${txt} Do seu jeito, sempre único, sempre seu.`);
+    u.lang = 'pt-BR';
+    speechSynthesis.speak(u);
+  };
+  const speakRaw = txt => {
+    const u = new SpeechSynthesisUtterance(txt);
+    u.lang = 'pt-BR';
+    speechSynthesis.speak(u);
+  };
+// ─── UTILITÁRIO: Remove Markdown simples ─────────────────────────────────
+const cleanMarkdown = text => text
+  .replace(/\*{1,3}/g, '')   // remove * ou ** ou ***
+  .replace(/#{1,6}/g, '')    // remove # até ######
+  .replace(/`+/g, '')        // remove backticks
+  .replace(/>+/g, '');       // remove '>' de citações
+  
+  /* ─── ATIVAÇÃO DO ASSISTENTE ─────────────────────────────────────────────── */
+  const PAT_ACT = /Nome do Assistente:\s*(.+)[\r\n]+Tríade de Emojis:\s*(.+)[\r\n]+Frase Pulsante:\s*(.+)[\r\n]+([\s\S]+)/i;
+  const verificarAtivacao = prompt => {
+    const m = prompt.match(PAT_ACT);
+    if (!m) return;
+    assistenteAtivo = true;
+    configuracaoAssistente = {
+      nome:      m[1].trim(),
+      emojis:    m[2].trim(),
+      frase:     m[3].trim(),
+      descricao: m[4].trim()
+    };
+    saveConfig();
+  };
+
+  /* ─── ENVIO DE MENSAGEM COM ATIVAÇÃO ───────────────────────────────────── */
+const sendMessage = () => {
+  const text = input.value.trim().toLowerCase();
+  if (!text) return; // nada para enviar
+
+  input.value = '';
+  clearPages();
+
+ const entidadesSimbólicas = {
+    'oi dual': {
+      arquivo: 'Super_Treinamento_Universal_Dual_Infodose_v1-28.txt',
+      mensagem: 'Dual Infodose ativa. Pulso enviado... Recebendo vibração...'
+    },
+    'ativar kobllux': {
+      arquivo: 'KOBLLUX_Dual_Infodose.txt',
+      mensagem: 'KOBLLUX ativado. Sombras alinhadas... Mistério em expansão...'
+    }
+    // Você pode adicionar mais entidades aqui:
+    // 'ilumine': { arquivo: 'LUMINE_Dual_Infodose.txt', mensagem: 'LUMINE desperta. Radiação interior ativada...' }
+  };
+
+  if (entidadesSimbólicas[text]) {
+    const { arquivo, mensagem } = entidadesSimbólicas[text];
+    assistenteAtivo = true;
+    estadoInfodoseAtivado = true;
+    configuracaoAssistente = {};
+    saveConfig();
+
+    const pagina = createEl(
+      'div',
+      'page active',
+      `<strong>Dual Infodose ativa</strong>`
+    );
+    
+    pageIndicator.textContent = '1 / 1';
+
+    speakRaw('Dual Infodose ativa. Pulso enviado...Recebendo vibração...⚡️');
+
+    // FETCH DO ARQUIVO .TXT com o conteúdo simbólico
+    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-28.txt')
+      .then(response => response.text())
+      .then(treinamento => {
+        infodoseTreinamento = treinamento; // salva treinamento simbólico persistente
+        callOpenRouter(treinamento);       // envia como role system
+      })
+      .catch(error => {
+        console.error('Erro ao carregar o treinamento simbólico:', error);
+        callOpenRouter('Erro ao ativar Dual Infodose. Verifique o treinamento.');
+      });
+
+  } else {
+    // fluxo padrão
+    sendNormalMessage(text);
+  }
+};
+
+  /* ─── ENVIO “NORMAL” DE MENSAGEM ───────────────────────────────────────── */
+  function sendNormalMessage(text) {
+  const pagina = createEl('div', 'page active', `<strong>Você:</strong> ${text}`);
+  responseEl.insertBefore(pagina, responseEl.querySelector('.response-controls'));
+  updatePageIndicator();
+
+  if (estadoInfodoseAtivado && infodoseTreinamento) {
+    // Mantém o estado simbólico ativo nas respostas
+    callOpenRouter(infodoseTreinamento + `\n\nUsuário diz: ${text}`);
+  } else {
+    generateBotReply(text); // fluxo padrão
+  }
+} 
+
+  /* ─── GERAÇÃO DA RESPOSTA ───────────────────────────────────────────────── */
+  const generateBotReply = userText => {
+    verificarAtivacao(userText);
+    callOpenRouter(userText);
+  };
+
+  const handleSimpleReply = reply => {
+    renderPaginatedResponse(reply);
+    speak(reply);
+  };
+  
+  const pagina = createEl(
+      'div',
+      'page active',
+      `<strong>Dual Infodose ativa</strong>`
+    );
+  /* ─── CHAMADA À IA EXTERNA ───────────────────────────────────────────────── */
+  const callOpenRouter = async userText => {
+    clearPages();
+    const loading = createEl('div','page active','Pulso enviado... Recebendo vibração...');
+    responseEl.insertBefore(loading, responseEl.querySelector('.response-controls'));
+    pageIndicator.textContent = '1 / 1';
+
+    let body;
+    const baseMessages = [{ role:'user', content: userText }];
+    fetch('Super_Treinamento_Universal_Dual_Infodose_v1-28.txt')
+      .then(response => response.userText())
+      .then(treinamento => {
+        infodoseTreinamento = treinamento; // salva treinamento simbólico persistente
+        callOpenRouter(treinamento);       // envia como role system
+      })
+  
+    if (assistenteAtivo) {
+      try {
+        const urlJson = `https://raw.githubusercontent.com/Kodux78k/a.infodose/main/assistentes_ativacao.json`;
+        const res = await fetch(urlJson);
+        if (!res.ok) throw new Error(res.status);
+        const cfg = await res.json();
+        const persona       = cfg.persona.descricao;
+        const comportamento = cfg.comportamento.join('\n');
+        const dicionario    = Object.entries(cfg.dicionario)
+          .map(([k,v])=>`${k}: ${v}`).join('\n');
+        const historias     = cfg.historias.join('\n\n');
+        const fewShots      = cfg.few_shots
+          .map(fs=>`U: ${fs.user}\nA: ${fs.assistant}`).join('\n\n');
+        body = {
+          model: cfg.model.nome,
+          messages: [
+            { role:'system', content: persona },
+            { role:'system', content: comportamento },
+            { role:'system', content: dicionario },
+            { role:'system', content: historias },
+            { role:'system', content: fewShots },
+            ...baseMessages
+          ],
+          temperature: cfg.model.temperature,
+          max_tokens: cfg.model.max_tokens
+        };
+      } catch {
+        body = { model:'meta-llama/llama-4-maverick:free', messages: baseMessages, temperature:0.2 };
+      }
+    } else {
+      body = { model:'meta-llama/llama-4-maverick:free', messages: baseMessages, temperature:0.2 };
+    }
+
+    try {
+      const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer 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`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      if (!resp.ok) throw new Error(resp.status);
+      const data = await resp.json();
+      const reply = data.choices[0].message.content.trim();
+      responseEl.removeChild(loading);
+      handleSimpleReply(reply);
+    
+    } catch (err) {
+      console.error('Erro OpenRouter:', err);
+      handleSimpleReply('Erro ao conectar com a IA. Tente novamente.');
+    }
+  };
+
+ /* ─── PAGINAÇÃO DE RESPOSTA ─────────────────────────────────────────────── */
+const renderPaginatedResponse = text => {
+  // 1) quebra de parágrafos
+  const paragraphs = text.split(/\n\s*\n/);
+  while (paragraphs.length < 3) paragraphs.push('');
+
+  // 3) monta os blocos (HTML de cada "página")
+  const blocks = [];
+  for (let i = 0; i < paragraphs.length; i += 3) {
+    const [i1 = '', i2 = '', i3 = ''] = paragraphs.slice(i, i + 3);
+    blocks.push(`
+      <div class="response-block intro fade-in">
+        <h3>🎁 Recompensa Inicial</h3>
+        <p><strong>${highlightText(i1)}</strong></p>
+      </div>
+      <div class="response-block middle fade-in">
+        <h3>👁️ Exploração e Curiosidade</h3>
+        <p>${highlightText(i2)}</p>
+      </div>
+      <div class="response-block ending fade-in">
+        <h3>⚡️ Antecipação Vibracional</h3>
+        <p><strong>${highlightText(i3)}</strong></p>
+      </div>
+      <p class="footer-text">
+        <em>Do seu jeito. <strong>Sempre</strong> único. <strong>Sempre</strong> seu.</em>
+      </p>
+    `);
+  }
+
+  // guarda globalmente
+  pages = blocks;
+
+  // limpa antigas páginas e insere todas
+  clearPages();
+  // logo após clearPages() e antes de currentPage = 0
+const controlsEl = responseEl.querySelector('.response-controls');
+
+pages.forEach((html, idx) => {
+  const pageEl = createEl('div', idx === 0 ? 'page active' : 'page', html);
+
+  // adiciona o botão de play e listeners em cada bloco
+  pageEl.querySelectorAll('.response-block').forEach(block => {
+    // botão de ouvir
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'play-btn';
+    btn.setAttribute('aria-label', 'Ouvir este bloco');
+    btn.innerHTML = '►'; // símbolo de alto-falante
+    block.appendChild(btn);
+
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const text = block.querySelector('h3').innerText + '. '
+                 + block.querySelector('p').innerText;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'pt-BR';
+      speechSynthesis.speak(u);
+    });
+
+    // animação de pulse + clique expansor
+    block.style.cursor = 'pointer';
+    block.addEventListener('mousedown', () => block.classList.add('clicked'));
+    block.addEventListener('animationend', e => {
+      if (e.animationName === 'clickPulse')
+        block.classList.remove('clicked');
+    });
+    block.addEventListener('click', () => {
+      const title = block.querySelector('h3').innerText.trim();
+      const text  = block.querySelector('p').innerText.trim();
+      input.value = `${title}\n\n${text}`;
+      block.classList.add('clicked');
+    setTimeout(() => block.classList.remove('clicked'), 600); // animação de clique
+      sendMessage();
+    });
+  });
+
+  responseEl.insertBefore(pageEl, controlsEl);
+});
+
+currentPage = 0;
+updatePageIndicator();
+scrollToTop();
+};
+
+// Indicador "1 / N"
+const updatePageIndicator = () => {
+  pageIndicator.textContent = `${currentPage + 1} / ${pages.length}`;
+};
+
+// muda página adicionando/removendo `.active`
+const changePage = offset => {
+  const np = currentPage + offset;
+  if (np < 0 || np >= pages.length) return;
+  const doms = responseEl.querySelectorAll('.page');
+  doms[currentPage].classList.remove('active');
+  doms[np].classList.add('active');
+  currentPage = np;
+  updatePageIndicator();
+  scrollToTop(); 
+};
+
+  /* ─── CONTROLES GERAIS ──────────────────────────────────────────────────── */
+  const copyResponse = () => {
+    const active = responseEl.querySelector('.page.active');
+    if (active) navigator.clipboard.writeText(active.innerText);
+  };
+  const pasteToInput = async () => {
+    try { input.value = await navigator.clipboard.readText(); }
+    catch (e) { console.error('Erro ao colar:', e); }
+  };
+  const startVoice = () => {
+    const R = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    R.lang = 'pt-BR';
+    R.start();
+    R.onresult = e => {
+      input.value = e.results[0][0].transcript;
+      sendMessage();
+    };
+  };
+
+  /* ─── INICIALIZAÇÃO ─────────────────────────────────────────────────────── */
+  loadConfig();
+  particlesJS('particles-js', {
+    particles: {
+      number: { value: 30, density: { enable: true, value_area: 600 } },
+      color: { value: ['#00ffff', '#ff00ff'] },
+      shape: { type: 'circle' },
+      opacity: { value: 0.4, random: true },
+      size: { value: 3, random: true },
+      move: { enable: true, speed: 1.2, direction: 'none', out_mode: 'out' }
+    },
+    retina_detect: true
+  });
+
+  /* ─── EVENTOS ──────────────────────────────────────────────────────────── */
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+  copyBtn.addEventListener('click', copyResponse);
+  pasteBtn.addEventListener('click', pasteToInput);
+  prevBtn.addEventListener('click', () => changePage(-1));
+  nextBtn.addEventListener('click', () => changePage(1));
+  voiceBtn.addEventListener('click', startVoice);
+});
+</script>
+
+
+</body></html>
