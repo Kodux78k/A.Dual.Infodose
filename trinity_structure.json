@@ -1,0 +1,15 @@
+{
+  "base": "KOBLLUX_VERDADE",
+  "paths": [
+    "ROOT",
+    "ROOT-2",
+    "ROOT-3",
+    "ROOT-4"
+  ],
+  "purpose": [
+    "source",
+    "scripts",
+    "spirit",
+    "union"
+  ]
+}
