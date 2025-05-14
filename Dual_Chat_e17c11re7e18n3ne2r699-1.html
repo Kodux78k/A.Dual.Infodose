@@ -166,27 +166,42 @@
   100% { transform: scale(1); }
 }
 
-.response-block.clicked {
-  animation: clickPulse 0.6s ease-out;
+.response-block {
+  position: relative;
+  margin-bottom: 1rem;
+  padding: 1.6rem;
+  border-radius: 12px;
+  animation: fadeIn 1.8s ease forwards;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  font-size: 0.9em;
+  line-height: 1.6;
+  text-align: center;
+  text-indent: 1.5em;
+  overflow-wrap: break-word;
+  pointer-events: auto;
 }
+
+.response-block.clicked,
 .response-block:active {
   animation: clickPulse 0.6s ease-out;
   box-shadow: 0 0 20px rgba(0,255,255,0.4);
-  }
-    .response-block {
-      margin-bottom: 1rem;
-      padding: 1.6rem;
-      border-radius: 12px;
-      animation: fadeIn 1.8s ease forwards;
-      transition: box-shadow 0.2s ease, transform 0.2s ease;
-      font-size: 0.9em; /* reduzido para melhor leitura em mobile */
-      line-height: 1.6;
-      text-align: center;
-      text-indent: 1.5em;
-      overflow-wrap: break-word;
-      pointer-events: auto;
-    
-    }
+}
+
+.play-btn {
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  type: button;
+  background: transparent;
+  border: none;
+  font-size: 0.9em;
+  cursor: pointer;
+  color: rgba(255,255,255,0.6);
+  transition: color 0.2s;
+}
+.play-btn:hover {
+  color: white;
+}
     h3 {
       font-size: 1.1em;
     }
@@ -229,6 +244,9 @@
       display: flex;
       gap: 10px; /* ajusta o espaçamento entre eles */
     }
+    .response-block {
+  position: relative;
+}
   </style>
 </head>
 <body>
@@ -287,6 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const responseEl       = document.getElementById('response');
 // função utilitária de rolagem suave
   const scrollToTop = () => responseEl.scrollTo({ top: 0, behavior: 'smooth' });
+  // …o resto do seu código continua aqui:
   const pageIndicator    = document.getElementById('pageIndicator');
   const copyBtn          = document.querySelector('.copy-button');
   const pasteBtn         = document.querySelector('.paste-button');
@@ -543,41 +562,52 @@ const renderPaginatedResponse = text => {
 
   // limpa antigas páginas e insere todas
   clearPages();
-  const controlsEl = responseEl.querySelector('.response-controls');
-  
-  pages.forEach((html, idx) => {
-  const pageEl = createEl('div',
-    `page${idx === 0 ? ' active' : ''}`,
-    html
-  );
-  
-  responseEl.insertBefore(pageEl, controlsEl);
-// → adicionar listener a cada bloco interno
+  // logo após clearPages() e antes de currentPage = 0
+const controlsEl = responseEl.querySelector('.response-controls');
+
+pages.forEach((html, idx) => {
+  const pageEl = createEl('div', idx === 0 ? 'page active' : 'page', html);
+
+  // adiciona o botão de play e listeners em cada bloco
   pageEl.querySelectorAll('.response-block').forEach(block => {
-  block.style.cursor = 'pointer';
+    // botão de ouvir
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'play-btn';
+    btn.setAttribute('aria-label', 'Ouvir este bloco');
+    btn.innerHTML = '►'; // símbolo de alto-falante
+    block.appendChild(btn);
 
-  block.addEventListener('mousedown', () => {
-    block.classList.add('clicked');
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const text = block.querySelector('h3').innerText + '. '
+                 + block.querySelector('p').innerText;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'pt-BR';
+      speechSynthesis.speak(u);
+    });
+
+    // animação de pulse + clique expansor
+    block.style.cursor = 'pointer';
+    block.addEventListener('mousedown', () => block.classList.add('clicked'));
+    block.addEventListener('animationend', e => {
+      if (e.animationName === 'clickPulse')
+        block.classList.remove('clicked');
+    });
+    block.addEventListener('click', () => {
+      const title = block.querySelector('h3').innerText.trim();
+      const text  = block.querySelector('p').innerText.trim();
+      input.value = `${title}\n\n${text}`;
+      sendMessage();
+    });
   });
-  block.addEventListener('animationend', e => {
-  // só remove a classe se for o clickPulse que terminou
-  if (e.animationName === 'clickPulse') {
-    block.classList.remove('clicked');
-  }
+
+  responseEl.insertBefore(pageEl, controlsEl);
 });
 
-block.addEventListener('click', () => {
-  const title = block.querySelector('h3').innerText.trim();
-  const text  = block.querySelector('p').innerText.trim();
-  input.value = `${title}\n\n${text}`;
-  sendMessage();
-});
-  });
-});
-
-  currentPage = 0;
-  updatePageIndicator();
-  scrollToTop();
+currentPage = 0;
+updatePageIndicator();
+scrollToTop();
 };
 
 // Indicador "1 / N"
