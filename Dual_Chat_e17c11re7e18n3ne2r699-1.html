@@ -160,23 +160,37 @@
 .fade-in {
   animation: fadeIn 0.8s ease forwards;
 }
+@keyframes clickPulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
 
+.response-block.clicked {
+  animation: clickPulse 0.6s ease-out;
+}
+.response-block:active {
+  animation: clickPulse 0.6s ease-out;
+  box-shadow: 0 0 20px rgba(0,255,255,0.4);
+  }
     .response-block {
       margin-bottom: 1rem;
       padding: 1.6rem;
       border-radius: 12px;
       animation: fadeIn 1.8s ease forwards;
-      transition: background 0.5s ease;
+      transition: background 0.5s ease, box-shadow 0.2s ease, transform 0.2s ease;;
       font-size: 0.9em; /* reduzido para melhor leitura em mobile */
       line-height: 1.6;
       text-align: center;
       text-indent: 1.5em;
       overflow-wrap: break-word;
+      pointer-events: auto;
     
     }
     h3 {
       font-size: 1.1em;
     }
+    
     
     /* Gradientes leves por bloco */
     .response-block.intro {
@@ -271,6 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ─── CACHE DE ELEMENTOS ───────────────────────────────────────────────── */
   const input            = document.getElementById('userInput');
   const responseEl       = document.getElementById('response');
+// função utilitária de rolagem suave
+  const scrollToTop = () => responseEl.scrollTo({ top: 0, behavior: 'smooth' });
   const pageIndicator    = document.getElementById('pageIndicator');
   const copyBtn          = document.querySelector('.copy-button');
   const pasteBtn         = document.querySelector('.paste-button');
@@ -300,6 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
       assistenteAtivo = true;
     }
   };
+
   const clearPages = () =>
     responseEl.querySelectorAll('.page').forEach(el => el.remove());
   const createEl = (tag, cls, html) => {
@@ -527,16 +544,40 @@ const renderPaginatedResponse = text => {
   // limpa antigas páginas e insere todas
   clearPages();
   const controlsEl = responseEl.querySelector('.response-controls');
+  
   pages.forEach((html, idx) => {
-    const pageEl = createEl('div',
-      `page${idx === 0 ? ' active' : ''}`, 
-      html
-    );
-    responseEl.insertBefore(pageEl, controlsEl);
+  const pageEl = createEl('div',
+    `page${idx === 0 ? ' active' : ''}`,
+    html
+  );
+  
+  responseEl.insertBefore(pageEl, controlsEl);
+// → adicionar listener a cada bloco interno
+  pageEl.querySelectorAll('.response-block').forEach(block => {
+  block.style.cursor = 'pointer';
+
+  block.addEventListener('mousedown', () => {
+    block.classList.add('clicked');
   });
+  block.addEventListener('animationend', e => {
+  // só remove a classe se for o clickPulse que terminou
+  if (e.animationName === 'clickPulse') {
+    block.classList.remove('clicked');
+  }
+});
+
+block.addEventListener('click', () => {
+  const title = block.querySelector('h3').innerText.trim();
+  const text  = block.querySelector('p').innerText.trim();
+  input.value = `${title}\n\n${text}`;
+  sendMessage();
+});
+  });
+});
 
   currentPage = 0;
   updatePageIndicator();
+  scrollToTop();
 };
 
 // Indicador "1 / N"
@@ -553,6 +594,7 @@ const changePage = offset => {
   doms[np].classList.add('active');
   currentPage = np;
   updatePageIndicator();
+  scrollToTop(); 
 };
 
   /* ─── CONTROLES GERAIS ──────────────────────────────────────────────────── */
