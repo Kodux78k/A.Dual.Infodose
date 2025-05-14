@@ -181,6 +181,7 @@
   pointer-events: auto;
 }
 
+.response-block:hover,
 .response-block.clicked,
 .response-block:active {
   animation: clickPulse 0.6s ease-out;
@@ -233,9 +234,7 @@
       display: block;
       opacity: 1;
     }
-        .response-block:hover {
-      box-shadow: 0 0 10px rgba(255,255,255,0.1);
-    }
+        
     .footer-text {
       margin-top: 20px;
       font-size: 0.8em;
@@ -244,9 +243,6 @@
       display: flex;
       gap: 10px; /* ajusta o espaçamento entre eles */
     }
-    .response-block {
-  position: relative;
-}
   </style>
 </head>
 <body>
