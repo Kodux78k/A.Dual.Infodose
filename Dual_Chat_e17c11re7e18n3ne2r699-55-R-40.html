@@ -266,6 +266,7 @@
                   ? training + '\n\nUsuário diz: ' + userText
                   : userText;
                 showLoading('Pulso em Expansão...');
+                speakText('Pulso em Expansão...');
                 callAI(prompt);
               }
             });
@@ -412,15 +413,15 @@ localStorage.setItem('infodoseTraining', training);
       particlesJS('particles-js',{
         particles:{
           number:{value:40},color:{value:['#0ff','#f0f']},
-          shape:{type:'circle'},opacity:{value:0.4},size:{value:2.3},
+          shape:{type:'circle'},opacity:{value:0.4},size:{value:2.4},
           move:{enable:true,speed:1.5}
         },retina_detect:true
       });
 
       sendBtn.addEventListener('click', sendMessage);
       input.addEventListener('keypress', e => { if (e.key==='Enter') sendMessage(); });
-      prevBtn.addEventListener('click', () => { autoAdvance=false; changePage(-1); });
-      nextBtn.addEventListener('click', () => { autoAdvance=false; changePage(1); });
+      prevBtn.addEventListener('click', () => { changePage(-1); });
+      nextBtn.addEventListener('click', () => { changePage(1); });
     });
   </script>
 </body>
