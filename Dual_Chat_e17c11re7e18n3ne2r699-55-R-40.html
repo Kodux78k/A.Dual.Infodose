@@ -396,7 +396,7 @@ localStorage.setItem('infodoseTraining', training);
           const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method:'POST',
             headers:{
-              'Authorization':'Bearer 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',
+              'Authorization':'Bearer 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',
               'Content-Type':'application/json'
             },
             body: JSON.stringify(body)
@@ -404,7 +404,7 @@ localStorage.setItem('infodoseTraining', training);
           const data = await resp.json();
           renderPaginatedResponse(data.choices[0].message.content.trim());
         } catch {
-          renderPaginatedResponse('O pulso oscilou.');
+          renderPaginatedResponse('O pulso oscilou, o fluxo continua.');
         }
       }
 
@@ -412,7 +412,7 @@ localStorage.setItem('infodoseTraining', training);
       particlesJS('particles-js',{
         particles:{
           number:{value:40},color:{value:['#0ff','#f0f']},
-          shape:{type:'circle'},opacity:{value:0.4},size:{value:3},
+          shape:{type:'circle'},opacity:{value:0.4},size:{value:2.3},
           move:{enable:true,speed:1.5}
         },retina_detect:true
       });
