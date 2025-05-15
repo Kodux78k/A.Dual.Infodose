@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dual.Infodose Chat Cinematográfico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: linear-gradient(to bottom, #000, #1a1a1a);
+      --text-dark: #fff;
+      --primary: #111;
+      --secondary: #5e5c5e;
+      --fast: 0.4s;
+      --med: 0.8s;
+      --slow: 1.8s;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body {
+      padding:20px; background:var(--bg-dark); color:var(--text-dark);
+      font-family:'Montserrat',sans-serif; min-height:100vh; overflow:hidden;
+      display:flex; flex-direction:column; align-items:center;
+    }
+    #particles-js{position:absolute;inset:0;z-index:0}
+    
+    .svg-container {
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px;
+      height: 160px;
+      z-index: 1;
+    }
+    .svg-container object {
+      width: 100%;
+      height: 100%;
+    }
+    .response-container{
+      position:fixed;left:20px;right:20px;bottom:160px;
+      padding:12px;background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);
+      border-radius:20px;max-height:calc(100vh - 160px - 40px);
+      overflow-y:auto;-webkit-overflow-scrolling:touch;z-index:1;
+    }
+    .page{display:none;opacity:0;transition:opacity var(--med) ease-in-out}
+    .page.active{display:block;opacity:1}
+    .page.initial{text-align:center;font-size:1.1em}
+
+    .response-controls{
+      display:flex;justify-content:space-between;align-items:center;
+      margin-top:15px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.2);
+    }
+    .control-buttons{display:flex;gap:10px}
+    .copy-button,.paste-button{
+      background:rgba(255,255,255,0.05);padding:6px;border-radius:6px;
+      cursor:pointer;transition:background var(--fast);display:flex;gap:6px;
+    }
+    .copy-button:hover,.paste-button:hover{background:rgba(255,255,255,0.15)}
+    .copy-button svg circle,
+    .copy-button svg rect,
+    .paste-button svg circle,
+    .paste-button svg line{stroke:rgba(255,255,255,0.3)}
+
+    .pagination{display:flex;align-items:center;gap:10px}
+    .pagination button{
+      background:none;border:none;font-size:1.2em;color:#6fe4fb;
+      cursor:pointer;transition:transform var(--fast);
+    }
+    .pagination button:hover{transform:scale(1.2)}
+
+    .response-block{
+      margin:1rem 0;padding:1.2rem;border-radius:12px;
+      animation:fadeIn var(--slow) ease forwards;
+      transition:box-shadow var(--fast),transform var(--fast);
+      line-height:1.5;position:relative;cursor:pointer;overflow:hidden;
+    }
+    .response-block h3{margin-bottom:12px}
+    .response-block:hover{box-shadow:0 0 15px rgba(0,255,255,0.4)}
+    .response-block.clicked{animation:clickPulse var(--med) ease-out}
+    .response-block.expanded{
+      transform:scale(1.03);background:rgba(0,0,0,0.6);z-index:2;
+    }
+
+    .intro{background:linear-gradient(135deg,rgba(0,255,255,0.2),rgba(0,100,100,0.1));border-left:4px solid #0ff}
+    .middle{background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(50,50,50,0.1));border-left:4px solid rgba(255,255,255,0.4)}
+    .ending{background:linear-gradient(135deg,rgba(255,0,255,0.2),rgba(100,0,100,0.1));border-left:4px solid #f0f}
+
+    .footer-text{
+      margin-top:12px;font-size:0.8em;text-align:center;font-style:italic;
+    }
+
+    .input-container{
+      position:fixed;left:20px;right:20px;bottom:90px;
+      display:flex;gap:10px;z-index:2;max-width:calc(100% - 40px);
+    }
+    .input-container input{
+      flex:1;padding:10px;border:none;border-radius:20px;
+      background:rgba(255,255,255,0.1);color:inherit;outline:none;
+      font-size:16px;transition:background var(--fast);
+    }
+    .input-container input:focus{background:rgba(255,255,255,0.2)}
+    .input-container button{
+      width:60px;height:60px;border:none;border-radius:50%;
+      background:linear-gradient(45deg,var(--primary),var(--secondary));
+      color:#fff;font-size:1.5em;cursor:pointer;
+      display:flex;justify-content:center;align-items:center;
+      animation:pulse 2s infinite ease-in-out;
+      transition:transform var(--fast);
+    }
+    .input-container button:hover{transform:scale(1.1)}
+
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes clickPulse{0%,100%{opacity:1}50%{opacity:0.8}}
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="svg-container">
+    <object data="3D_logo_Dual_Infodose_9.svg" type="image/svg+xml"></object>
+  </div>
+
+  <div class="response-container" id="response">
+    <div class="page initial active">
+      <strong>Clique no ◉ e diga “Oi, Dual”.</strong><br>
+      <em>Sempre único. Sempre seu.</em>
+    </div>
+    <div class="response-controls">
+      <div class="control-buttons">
+        <button class="copy-button" title="Copiar">
+          <svg viewBox="0 0 24 24" width="20">
+            <circle cx="12" cy="12" r="10" fill="none"/>
+            <rect x="6" y="6" width="12" height="12" fill="none"/>
+          </svg>
+        </button>
+        <button class="paste-button" title="Colar">
+          <svg viewBox="0 0 24 24" width="20">
+            <circle cx="12" cy="12" r="10" fill="none"/>
+            <line x1="12" y1="4" x2="12" y2="20"/>
+          </svg>
+        </button>
+      </div>
+      <div class="pagination">
+        <button data-action="prev">⟵</button>
+        <span id="pageIndicator">1 / 1</span>
+        <button data-action="next">⟶</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-container">
+    <input id="userInput" type="text" placeholder="Diga: 'oi, Dual'...">
+    <button id="sendBtn" title="Enviar">➤</button>
+    <button id="voiceBtn" title="Falar">
+      <object data="Reset_buttom_Dual-Infodose.svg" type="image/svg+xml" width="36" height="36"></object>
+    </button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ----------------------------------
+      // 1) Registra vozes assim que disponíveis
+      speechSynthesis.onvoiceschanged = () => {
+        window._vozes = speechSynthesis.getVoices();
+      };
+
+      const input    = document.getElementById('userInput');
+      const respEl   = document.getElementById('response');
+      const pageInd  = document.getElementById('pageIndicator');
+      const copyBtn  = document.querySelector('.copy-button');
+      const pasteBtn = document.querySelector('.paste-button');
+      const prevBtn  = document.querySelector('[data-action="prev"]');
+      const nextBtn  = document.querySelector('[data-action="next"]');
+      const sendBtn  = document.getElementById('sendBtn');
+      const voiceBtn = document.getElementById('voiceBtn');
+
+      let pages = [], currentPage = 0, training = '', active = false, autoAdvance = true;
+
+      const createEl = (tag, cls, html) => {
+        const e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (html) e.innerHTML = html;
+        return e;
+      };
+
+      const splitBlocks = text => {
+        let paras = text.split(/\n\s*\n/).filter(p=>p.trim());
+        if (paras.length % 3 !== 0) {
+          paras = paras.join(' ').match(/[^\.!\?]+[\.!\?]+/g).map(s=>s.trim());
+        }
+        const groups = [];
+        for (let i=0; i<paras.length; i+=3) groups.push(paras.slice(i,i+3));
+        return groups;
+      };
+
+      // Função de fala
+      const speakText = (txt, onend) => {
+        const u = new SpeechSynthesisUtterance(txt);
+        u.lang = 'pt-BR';
+        // opcional: definir voz explícita se quiser
+        if (window._vozes && window._vozes.length) {
+          u.voice = window._vozes.find(v=>v.lang==='pt-BR') || window._vozes[0];
+        }
+        if (onend) u.onend = onend;
+        speechSynthesis.speak(u);
+      };
+
+      const saveCfg = () => localStorage.setItem('infodoseOn','1');
+      const loadCfg = () => { if(localStorage.getItem('infodoseOn')) active = true; };
+
+      function clearPages() {
+        const init = respEl.querySelector('.page.initial');
+        if (init) init.remove();
+        respEl.querySelectorAll('.page:not(.initial)').forEach(p=>p.remove());
+      }
+      function scrollToContainer() {
+        const top = respEl.getBoundingClientRect().top + window.scrollY - 10;
+        window.scrollTo({ top:0, behavior: 'smooth' });
+      }
+      function scrollToTopOfContainer() {
+        respEl.scrollTo({ top: respEl.scrollHeight, behavior: 'smooth' });
+      }
+
+      function showLoading(msg) {
+        clearPages();
+        const controls = respEl.querySelector('.response-controls');
+        const page = createEl('div','page active');
+        page.appendChild(createEl('p','footer-text',msg));
+        respEl.insertBefore(page, controls);
+        pages = [page];
+        currentPage = 0;
+        pageInd.textContent = '…';
+      }
+
+      function renderPaginatedResponse(text) {
+        // 2) Cancela fala anterior
+        speechSynthesis.cancel();
+
+        autoAdvance = true;
+        clearPages();
+        const controls = respEl.querySelector('.response-controls');
+        pages = [];
+
+        const groups = splitBlocks(text);
+        groups.forEach((tris, gi) => {
+          const page = createEl('div', gi===0?'page active':'page');
+          tris.forEach((body, j) => {
+            const titles = ['🎁 Recompensa Inicial','👁️ Exploração e Curiosidade','⚡️ Antecipação Vibracional'];
+            const cls = j===0?'intro': j===1?'middle':'ending';
+            const b = createEl('div','response-block '+cls,`
+              <h3>${titles[j]}</h3><p>${body}</p>
+            `);
+            b.dataset.state = '';
+            b.addEventListener('click', () => {
+              if (!b.dataset.state) {
+                speechSynthesis.cancel();
+                speakText(body);
+                b.classList.add('clicked');
+                b.dataset.state = 'spoken';
+              } else {
+                b.classList.add('expanded');
+                b.dataset.state = '';
+                const userText = `${titles[j]}\n\n${body}`;
+                const prompt = training
+                  ? training + '\n\nUsuário diz: ' + userText
+                  : userText;
+                showLoading('Pulso em Expansão...');
+                callAI(prompt);
+              }
+            });
+            b.addEventListener('animationend', e => {
+              if (e.animationName==='clickPulse') b.classList.remove('clicked');
+            });
+            page.appendChild(b);
+          });
+          page.appendChild(createEl('p','footer-text',
+            `<em>Do seu jeito. <strong>Sempre</strong> único. <strong>Sempre</strong> seu.</em>`
+          ));
+          respEl.insertBefore(page, controls);
+          pages.push(page);
+        });
+
+        currentPage = 0;
+        pageInd.textContent = `1 / ${pages.length}`;
+        scrollToContainer();
+        scrollToTopOfContainer();
+
+        // 3) Dispara fala da primeira página
+        speakPage(0);
+      }
+
+      function speakPage(i) {
+        const page = pages[i];
+        const body = Array.from(page.querySelectorAll('.response-block p'))
+          .map(p=>p.innerText).join(' ');
+        speakText(body, () => {
+          if (!autoAdvance) return;
+          if (i < pages.length - 1) {
+            changePage(1);
+            speakPage(i+1);
+          } else {
+            speakText('Do seu jeito, sempre único, sempre seu.');
+          }
+        });
+      }
+
+      function updateIndicator() {
+        pageInd.textContent = `${currentPage+1} / ${pages.length}`;
+      }
+      function changePage(offset) {
+        const np = currentPage + offset;
+        if (np<0||np>=pages.length) return;
+        pages[currentPage].classList.remove('active');
+        pages[np].classList.add('active');
+        currentPage = np;
+        updateIndicator();
+        scrollToContainer();
+        scrollToTopOfContainer();
+      }
+
+      copyBtn.onclick = ()=>{
+        const a=respEl.querySelector('.page.active');
+        a && navigator.clipboard.writeText(a.innerText);
+      };
+      pasteBtn.onclick = async()=>{ input.value=await navigator.clipboard.readText(); };
+      voiceBtn.onclick = ()=>{
+        const R=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
+        R.lang='pt-BR'; R.start();
+        R.onresult=e=>{ input.value=e.results[0][0].transcript; sendMessage(); };
+      };
+
+      const entities = {
+        'oi dual':{
+          file:'Super_Treinamento_Universal_Dual_Infodose_v1-28.txt',
+          msg:'Dual Infodose ativa. Pulso enviado... Recebendo intenção...'
+        }
+      };
+
+      async function sendMessage(){
+        const raw = input.value.trim();
+        if (!raw) return;
+
+        // 4) “Primes” o TTS dentro do gesto do usuário
+        speechSynthesis.cancel();
+        speakText('',()=>{});
+        // opcional: ler o texto do usuário:
+        // speakText(raw);
+
+        input.value = '';
+        const txt = raw.toLowerCase();
+        if (entities[txt]) {
+          active=true; saveCfg();
+          showLoading(entities[txt].msg);
+          training = await fetch(entities[txt].file).then(r=>r.text()).catch(()=>training='');
+          callAI(training);
+        } else {
+          showLoading('⚡️Pulso enviado...Recebendo Intenção…');
+          callAI(txt);
+        }
+      }
+
+      async function callAI(content){
+        let body = {
+          model: 'meta-llama/llama-4-maverick:free',
+          messages: [{ role:'user', content }],
+          temperature: 0.2
+        };
+        if (active) {
+          try {
+            const cfg = await fetch(
+              'https://raw.githubusercontent.com/Kodux78k/a.infodose/main/assistentes_ativacao.json'
+            ).then(r=>r.json());
+            body.model = cfg.model.nome;
+            body.temperature = cfg.model.temperature;
+            const sys = [
+              cfg.persona.descricao,
+              cfg.comportamento.join('\n'),
+              Object.entries(cfg.dicionario).map(([k,v])=>`${k}: ${v}`).join('\n'),
+              cfg.historias.join('\n\n'),
+              cfg.few_shots.map(fs=>`U: ${fs.user}\nA: ${fs.assistant}`).join('\n\n')
+            ];
+            body.messages = sys.map(c=>({role:'system',content:c})).concat(body.messages);
+          } catch {}
+        }
+        try {
+          const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method:'POST',
+            headers:{
+              'Authorization':'Bearer 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',
+              'Content-Type':'application/json'
+            },
+            body: JSON.stringify(body)
+          });
+          const data = await resp.json();
+          renderPaginatedResponse(data.choices[0].message.content.trim());
+        } catch {
+          renderPaginatedResponse('O pulso oscilou.');
+        }
+      }
+
+      loadCfg();
+      particlesJS('particles-js',{
+        particles:{
+          number:{value:40},color:{value:['#0ff','#f0f']},
+          shape:{type:'circle'},opacity:{value:0.4},size:{value:3},
+          move:{enable:true,speed:1.5}
+        },retina_detect:true
+      });
+
+      sendBtn.addEventListener('click', sendMessage);
+      input.addEventListener('keypress', e => { if (e.key==='Enter') sendMessage(); });
+      prevBtn.addEventListener('click', () => { autoAdvance=false; changePage(-1); });
+      nextBtn.addEventListener('click', () => { autoAdvance=false; changePage(1); });
+    });
+  </script>
+</body>
+</html>
