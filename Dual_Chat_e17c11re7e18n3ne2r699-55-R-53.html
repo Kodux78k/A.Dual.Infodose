@@ -400,19 +400,7 @@
       document.querySelector('[data-action="next"]').addEventListener('click', () => changePage(1));
 
       document.querySelector('.copy-button').addEventListener('click', () => {
-        const copiarTudo = confirm(
-          "Clique em OK para copiar TODO o texto da página.\n" +
-          "Clique em Cancelar para copiar apenas o conteúdo desta página atual."
-        );
-        let textToCopy;
-        if (copiarTudo) {
-          textToCopy = document.documentElement.innerText;
-        } else {
-          const ativa = document.querySelector('.page.active');
-          textToCopy = ativa ? ativa.innerText : '';
-        }
-        navigator.clipboard.writeText(textToCopy)
-          .catch(() => alert('Falha ao copiar para a área de transferência'));
+        navigator.clipboard.writeText(document.documentElement.innerText);
       });
 
       document.querySelector('.paste-button').addEventListener('click', async () => {
