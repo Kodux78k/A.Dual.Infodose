@@ -80,7 +80,7 @@
       margin:1rem 0; padding:1.2rem; border-radius:12px;
       animation:fadeIn var(--slow) ease forwards;
       transition:box-shadow var(--fast),transform var(--fast);
-      line-height:1.5; position:relative; cursor:pointer; overflow:hidden;
+      line-height:1.5; position:relative; cursor:pointer; overflow:hidden;animation:pulse 6s infinite ease-in-out;
     }
     .response-block h3 { margin-bottom:12px }
     .response-block:hover { box-shadow:0 0 15px rgba(0,255,255,0.4) }
@@ -333,7 +333,7 @@
         const resp = await fetch(API_ENDPOINT, {
           method:'POST',
           headers:{
-            'Authorization':'Bearer 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',
+            'Authorization':'Bearer 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',
             'Content-Type':'application/json'
           },
           body: JSON.stringify(body)
