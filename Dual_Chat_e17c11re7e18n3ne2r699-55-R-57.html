@@ -209,7 +209,7 @@
     const speakText = (txt, onend) => {
       const u = new SpeechSynthesisUtterance(txt);
       u.lang = 'pt-BR';
-      u.rate = 0.9;
+      u.rate = 0.99;
       u.pitch = 1.1;
       u.volume = 1;
       if (window._vozes) u.voice = window._vozes.find(v=>v.lang==='pt-BR') || window._vozes[0];
